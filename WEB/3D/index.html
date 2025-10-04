@@ -225,7 +225,7 @@
     scene.add(ambientLight);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(50, 50, 50);
-    directionalLight.intensity = 10;
+    directionalLight.intensity = 5;
     scene.add(directionalLight);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -252,12 +252,12 @@
       updateLoadingState();
     });
     const CRATER_MATERIAL = new THREE.MeshStandardMaterial({
-      color: 0x333333,      // Color oscuro (roca o ceniza)
-      metalness: 0.1,
-      roughness: 0.8,
-      emissive: 0x111111,   // Añade un poco de auto-iluminación oscura
-      emissiveIntensity: 0.5
+      color: 0xff0000,      // Color rojo para simular el cráter
+      metalness: 0.0,       // No es metálico
+      roughness: 1.0,       // Muy rugoso para evitar brillos (el principal causante del "blanco")
+      // Se elimina 'emissive' y 'emissiveIntensity' para que no emita luz propia.
     });
+
 
     // Usaremos una geometría simple (un cilindro o un cono invertido simple)
     const CRATER_GEOMETRY = new THREE.CylinderGeometry(1, 4, 0.5, 32);
@@ -393,7 +393,7 @@ document.getElementById('close-card').addEventListener('click', () => {
           if (crater) {
             // Escala base, puedes usar la escala original del asteroide para referencia,
             // o un valor fijo para probar, como 10
-            const CRATER_SIZE = 1;
+            const CRATER_SIZE = 0.5;
             crater.scale.set(CRATER_SIZE, CRATER_SIZE, CRATER_SIZE);
           }
         }
