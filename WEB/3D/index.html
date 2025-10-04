@@ -9,12 +9,15 @@
   <script src="JS/three.min.js"></script>
   <script src="JS/OrbitControls.js"></script>
   <script src="JS/GLTFLoader.js"></script>
+  <!-- Incluir Turf.js desde CDN -->
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background: #222;
+      font-family: Arial, sans-serif;
     }
 
     #loading-screen {
@@ -30,9 +33,48 @@
       align-items: center;
       color: white;
       font-size: 24px;
-      font-family: sans-serif;
       z-index: 9999;
       transition: opacity 0.5s;
+    }
+
+    .panel {
+      background: rgba(30, 30, 30, 0.85);
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .severity-critical { border-left: 4px solid #ff0000; background: rgba(255, 0, 0, 0.2); }
+    .severity-high { border-left: 4px solid #ff6b00; background: rgba(255, 107, 0, 0.2); }
+    .severity-medium { border-left: 4px solid #ffa500; background: rgba(255, 165, 0, 0.2); }
+    .severity-low { border-left: 4px solid #ffff00; background: rgba(255, 255, 0, 0.2); }
+    .severity-minimal { border-left: 4px solid #00ff00; background: rgba(0, 255, 0, 0.2); }
+
+    .country-item {
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 120px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px 0;
+    }
+
+    button:hover {
+      background: #45a049;
     }
   </style>
 </head>
@@ -45,39 +87,60 @@
     <div id="progress-text">0%</div>
   </div>
 
-  <div id="controls-panel" style="
-        position: absolute; top: 10px; right: 10px; background: rgba(30,30,30,0.8);
-        padding: 12px; border-radius: 8px; color: white; z-index: 100;">
-    <h3 style="margin:0 0 8px 0;">Controles</h3>
-    <div>
-      <label>Latitud impacto: <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1"
-          value="40.4"></label>
+  <!-- Panel de Controles Principal -->
+  <div id="controls-panel" class="panel" style="position: absolute; top: 10px; right: 10px; width: 300px;">
+    <h3 style="margin:0 0 12px 0;">Controles de Impacto</h3>
+    
+    <div style="margin-bottom: 8px;">
+      <label>Latitud: <span id="lat-value">40.4</span>°</label>
+      <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
     </div>
-    <div>
-      <label>Longitud impacto: <input type="range" id="IMPACTO_LON_RANGE" min="-180" max="180" step="0.1"
-          value="-3.7"></label>
+    
+    <div style="margin-bottom: 8px;">
+      <label>Longitud: <span id="lon-value">-3.7</span>°</label>
+      <input type="range" id="IMPACTO_LON_RANGE" min="-180" max="180" step="0.1" value="-3.7">
     </div>
 
-    <div style="margin-top: 10px;">
+    <div style="margin-bottom: 8px;">
+      <label>Radio de Daño: <span id="radius-value">500</span> km</label>
+      <input type="range" id="RADIO_IMPACTO" min="100" max="2000" step="50" value="500">
+    </div>
+
+    <div style="margin-bottom: 10px;">
       <label>
-        Mover Cámara al Impacto:
         <input type="checkbox" id="moverCamara" checked>
+        Mover Cámara al Impacto
       </label>
     </div>
+
     <div>
-      <label>Cámara Z: <input type="range" id="camz" min="-10" max="100" step="0.1" value="80"></label>
-    </div>
-    <div>
-      <button id="iniciarImpacto" style="margin-top: 10px; padding: 5px 10px;">Reiniciar Impacto</button>
+      <button id="iniciarImpacto" style="width: 100%;">Simular Impacto</button>
+      <button id="analizarDanos" style="width: 100%; margin-top: 5px; background: #ff6b00;">Analizar Daños</button>
     </div>
   </div>
 
+  <!-- Panel de Resultados de Daños -->
+  <div id="damage-results" class="panel" style="
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 350px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+  ">
+    <h3 style="margin:0 0 12px 0;">Países Afectados</h3>
+    <div id="results-list"></div>
+    <button id="close-results" style="width: 100%; margin-top: 10px; background: #ff4444;">Cerrar</button>
+  </div>
 
-  <div id="info-card" style="
+  <!-- Tarjeta de Información del Asteroide -->
+  <div id="info-card" class="panel" style="
     position: absolute;
     top: 60px;
     left: 10px;
     width: 300px;
+<<<<<<< HEAD
     background: rgba(0, 0, 0, 0.7); /* negro semitransparente */
     color: white;
     padding: 10px;
@@ -98,6 +161,16 @@
 
 
 
+=======
+    display: none;
+  ">
+    <img id="asteroid-img" src="" style="width: 100%; margin-bottom:10px; border-radius: 5px;">
+    <h4 id="asteroid-name" style="margin: 0 0 8px 0;"></h4>
+    <p id="asteroid-info" style="margin: 0 0 10px 0; font-size: 14px;"></p>
+    <button id="close-card" style="width: 100%;">Cerrar</button>
+  </div>
+
+>>>>>>> 461f52ad45f7380ba2d730d924ab19c588b0865e
   <script>
     // ==========================================
     // 1. VARIABLES GLOBALES
@@ -106,38 +179,129 @@
     let pointer = new THREE.Vector2();
     let INTERSECTED = null;
     let intersectables = [];
-    let asteroide1 = null,
-      asteroide2 = null,
-      tierra = null,
-      crater = null;
+    let asteroide1 = null, asteroide2 = null, tierra = null, crater = null;
 
     const totalResources = 3;
     let resourcesLoaded = 0;
     const loadingScreen = document.getElementById('loading-screen');
     const progressText = document.getElementById('progress-text');
 
-    // VARIABLES DE IMPACTO (Valores para España)
+    // VARIABLES DE IMPACTO
     let TIERRA_RADIO = 50;
     const TIERRA_CENTER = new THREE.Vector3(0, 0, -25);
     const DISTANCIA_INICIAL_ASTEROIDE = 75;
     let IMPACTO_LAT = 40.4;
     let IMPACTO_LON = -3.7;
-    let radio_impacto = 1; //km
-    // ✅ VARIABLE DE CONTROL DE CÁMARA
+    let RADIO_DANO = 500; // km
     let MOVE_CAMERA_ON_IMPACT = true;
 
-    // Variables de posición de la cámara ajustadas
+    // Variables de animación
     const CAMERA_DISTANCE = 70;
     const CAMERA_HEIGHT = 20;
-
     let startPosition = new THREE.Vector3();
     let targetPosition = new THREE.Vector3();
     let animationClock = 0;
     const ANIMATION_DURATION = 150;
     let isImpactScheduled = false;
 
+    // Sistema de análisis de daños
+    let impactAnalyzer = null;
+
     // ==========================================
-    // 2. FUNCIONES DE LÓGICA
+    // 2. CLASE DE ANÁLISIS DE IMPACTO
+    // ==========================================
+
+    class ImpactDamageAnalyzer {
+      constructor() {
+        this.countriesData = null;
+      }
+
+      async loadCountriesData() {
+        try {
+          console.log("Cargando datos de países...");
+          const response = await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson');
+          this.countriesData = await response.json();
+          console.log("Datos de países cargados:", this.countriesData.features.length, "países");
+        } catch (error) {
+          console.error('Error cargando datos de países:', error);
+        }
+      }
+
+      analyzeImpact(impactLat, impactLon, radiusKm) {
+        if (!this.countriesData) {
+          throw new Error('Datos de países no cargados');
+        }
+
+        // Crear punto de impacto
+        const impactPoint = turf.point([impactLon, impactLat]);
+        
+        // Crear círculo de daño
+        const damageRadius = turf.circle(impactPoint, radiusKm, {
+          steps: 32,
+          units: 'kilometers'
+        });
+
+        const affectedCountries = [];
+
+        // Verificar cada país
+        this.countriesData.features.forEach(country => {
+          const countryGeometry = country.geometry;
+          
+          // Verificar intersección
+          const intersects = turf.booleanIntersects(damageRadius, countryGeometry);
+          
+          if (intersects) {
+            // Calcular porcentaje de afectación
+            const intersection = turf.intersect(damageRadius, countryGeometry);
+            let affectedPercentage = 0;
+            
+            if (intersection) {
+              try {
+                const countryArea = turf.area(countryGeometry);
+                const affectedArea = turf.area(intersection);
+                affectedPercentage = (affectedArea / countryArea) * 100;
+              } catch (e) {
+                console.warn("Error calculando área para:", country.properties.NAME);
+                affectedPercentage = 100; // Si hay error, asumir afectación total
+              }
+            } else {
+              affectedPercentage = 100; // Si no hay intersección pero intersecta, es total
+            }
+
+            affectedCountries.push({
+              name: country.properties.NAME || country.properties.ADMIN || 'Desconocido',
+              isoCode: country.properties.ISO_A3 || country.properties.ADM0_A3 || '',
+              affectedPercentage: Math.min(affectedPercentage, 100),
+              severity: this.calculateSeverity(affectedPercentage)
+            });
+          }
+        });
+
+        return affectedCountries.sort((a, b) => b.affectedPercentage - a.affectedPercentage);
+      }
+
+      calculateSeverity(percentage) {
+        if (percentage >= 80) return 'CRITICAL';
+        if (percentage >= 50) return 'HIGH';
+        if (percentage >= 20) return 'MEDIUM';
+        if (percentage >= 5) return 'LOW';
+        return 'MINIMAL';
+      }
+
+      getSeverityColor(severity) {
+        const colors = {
+          'CRITICAL': '#ff0000',
+          'HIGH': '#ff6b00',
+          'MEDIUM': '#ffa500',
+          'LOW': '#ffff00',
+          'MINIMAL': '#00ff00'
+        };
+        return colors[severity] || '#cccccc';
+      }
+    }
+
+    // ==========================================
+    // 3. FUNCIONES DE LÓGICA
     // ==========================================
 
     function latLonToVector3(lat, lon, radius) {
@@ -151,11 +315,16 @@
 
     function updateLoadingState() {
       resourcesLoaded++;
+      const progress = Math.round((resourcesLoaded / totalResources) * 100);
+      progressText.textContent = `${progress}%`;
+      
       if (resourcesLoaded === totalResources) {
         loadingScreen.style.opacity = 0;
         setTimeout(() => {
           loadingScreen.style.display = 'none';
           if (tierra && asteroide1) setupImpact();
+          // Inicializar el analizador de daños
+          initializeDamageAnalyzer();
         }, 500);
       }
     }
@@ -163,40 +332,31 @@
     function setupImpact() {
       animationClock = 0;
 
-      // 1. Cálculo del vector de dirección y posiciones
+      // Cálculo del vector de dirección y posiciones
       const dir = latLonToVector3(IMPACTO_LAT, IMPACTO_LON, 1).normalize();
       targetPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO));
       startPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO + DISTANCIA_INICIAL_ASTEROIDE));
 
-      // 2. Rotación de la Tierra
+      // Rotación de la Tierra
       tierra.rotation.y = -IMPACTO_LON * (Math.PI / 180);
 
-      // 3. Posicionar Asteroide y apuntar
+      // Posicionar Asteroide
       asteroide1.position.copy(startPosition);
       asteroide1.lookAt(targetPosition);
       asteroide1.scale.set(1, 1, 1);
 
-      // ✅ Reiniciar el cráter
+      // Reiniciar cráter
       if (crater) {
-        // Posicionar el cráter exactamente en el punto de impacto
         crater.position.copy(targetPosition);
-
-        // Rotar el cráter para que mire hacia afuera de la Tierra (alineado con la normal)
         crater.lookAt(targetPosition.clone().add(dir));
-
-        // Colocar la escala a cero para la animación inicial
         crater.scale.set(0.001, 0.001, 0.001);
       }
 
-      // ✅ 4. Ajustar la cámara SOLO si la variable de control está en true
+      // Ajustar cámara si está habilitado
       if (MOVE_CAMERA_ON_IMPACT) {
         let cameraPositionVector = dir.clone().multiplyScalar(CAMERA_DISTANCE);
         cameraPositionVector.y += CAMERA_HEIGHT;
-
-        // Posicionar la cámara
         camera.position.copy(TIERRA_CENTER).add(cameraPositionVector);
-
-        // Centrar los controles (el punto de mira) en el punto de impacto
         controls.target.copy(targetPosition);
         controls.update();
       }
@@ -204,8 +364,57 @@
       isImpactScheduled = true;
     }
 
+    async function initializeDamageAnalyzer() {
+      impactAnalyzer = new ImpactDamageAnalyzer();
+      await impactAnalyzer.loadCountriesData();
+      console.log("Analizador de daños inicializado");
+    }
+
+    async function analyzeDamage() {
+      if (!impactAnalyzer) {
+        alert("El analizador de daños aún no está listo. Por favor, espere...");
+        return;
+      }
+
+      try {
+        const results = impactAnalyzer.analyzeImpact(IMPACTO_LAT, IMPACTO_LON, RADIO_DANO);
+        displayDamageResults(results);
+      } catch (error) {
+        console.error("Error analizando daños:", error);
+        alert("Error al analizar daños: " + error.message);
+      }
+    }
+
+    function displayDamageResults(countries) {
+      const resultsDiv = document.getElementById('results-list');
+      const panel = document.getElementById('damage-results');
+      
+      resultsDiv.innerHTML = '';
+      
+      if (countries.length === 0) {
+        resultsDiv.innerHTML = '<p style="text-align: center; color: #ccc;">No hay países afectados en este radio</p>';
+      } else {
+        countries.forEach(country => {
+          const div = document.createElement('div');
+          div.className = `country-item severity-${country.severity.toLowerCase()}`;
+          div.innerHTML = `
+            <strong>${country.name}</strong>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+              <span>${country.affectedPercentage.toFixed(1)}% afectado</span>
+              <span style="color: ${impactAnalyzer.getSeverityColor(country.severity)}; font-weight: bold;">
+                ${country.severity}
+              </span>
+            </div>
+          `;
+          resultsDiv.appendChild(div);
+        });
+      }
+      
+      panel.style.display = 'block';
+    }
+
     // ==========================================
-    // 3. INICIALIZACIÓN DE THREE.JS
+    // 4. INICIALIZACIÓN DE THREE.JS
     // ==========================================
 
     scene = new THREE.Scene();
@@ -220,11 +429,9 @@
     ]);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 20, 80); // Posición inicial de cámara
+    camera.position.set(0, 20, 80);
 
-    renderer = new THREE.WebGLRenderer({
-      antialias: true
-    });
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -241,10 +448,9 @@
     controls.update();
 
     raycaster = new THREE.Raycaster();
-
     const loader = new THREE.GLTFLoader();
 
-    // Carga 1: Tierra
+    // Carga de modelos...
     loader.load('modelos/earth.gltf', gltf => {
       tierra = gltf.scene;
       tierra.scale.set(10, 10, 10);
@@ -258,24 +464,20 @@
 
       updateLoadingState();
     });
+
     const CRATER_MATERIAL = new THREE.MeshStandardMaterial({
-      color: 0xff0000,      // Color rojo para simular el cráter
-      metalness: 0.0,       // No es metálico
-      roughness: 1.0,       // Muy rugoso para evitar brillos (el principal causante del "blanco")
-      // Se elimina 'emissive' y 'emissiveIntensity' para que no emita luz propia.
+      color: 0xff0000,
+      metalness: 0.0,
+      roughness: 1.0,
     });
 
-
-    // Usaremos una geometría simple (un cilindro o un cono invertido simple)
     const CRATER_GEOMETRY = new THREE.CylinderGeometry(1, 4, 0.5, 32);
-    CRATER_GEOMETRY.rotateX(Math.PI / 2); // Orientar para que sea plano en XZ
-
+    CRATER_GEOMETRY.rotateX(Math.PI / 2);
     crater = new THREE.Mesh(CRATER_GEOMETRY, CRATER_MATERIAL);
-    crater.position.set(0, -1000, 0); // Oculto inicialmente
-    crater.scale.set(0.001, 0.001, 0.001); // Escala mínima
+    crater.position.set(0, -1000, 0);
+    crater.scale.set(0.001, 0.001, 0.001);
     scene.add(crater);
 
-    // Carga 2 & 3: Asteroides
     const asteroidModels = [
       { url: 'modelos/ASTEROID1.gltf', objRef: () => asteroide1, position: null },
       { url: 'modelos/ASTEROID2.gltf', objRef: () => asteroide2, position: null }
@@ -304,7 +506,7 @@
     });
 
     // ==========================================
-    // 4. EVENTOS
+    // 5. EVENTOS
     // ==========================================
 
     window.addEventListener("resize", () => {
@@ -318,6 +520,7 @@
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
+<<<<<<< HEAD
     //TARJETA DE INFORMACION ASTEROIDE
     document.addEventListener('click', () => {
     raycaster.setFromCamera(pointer, camera);
@@ -349,38 +552,65 @@ document.getElementById('close-card').addEventListener('click', () => {
     document.getElementById('info-card').style.display = 'none';
 });
 
-
-// Cerrar tarjeta
-document.getElementById('close-card').addEventListener('click', () => {
-    document.getElementById('info-card').style.display = 'none';
-});
-
-
+=======
     // Sliders de Control
-    document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => { IMPACTO_LAT = parseFloat(e.target.value); });
-    document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => { IMPACTO_LON = parseFloat(e.target.value); });
-    document.getElementById('camz').addEventListener('input', e => { camera.position.z = parseFloat(e.target.value); camera.updateProjectionMatrix(); });
+    document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => {
+      IMPACTO_LAT = parseFloat(e.target.value);
+      document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
+    });
+>>>>>>> 461f52ad45f7380ba2d730d924ab19c588b0865e
 
-    // ✅ EVENTO PARA EL NUEVO CHECKBOX
+    document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => {
+      IMPACTO_LON = parseFloat(e.target.value);
+      document.getElementById('lon-value').textContent = IMPACTO_LON.toFixed(1);
+    });
+
+    document.getElementById('RADIO_IMPACTO').addEventListener('input', e => {
+      RADIO_DANO = parseFloat(e.target.value);
+      document.getElementById('radius-value').textContent = RADIO_DANO;
+    });
+
     document.getElementById('moverCamara').addEventListener('change', e => {
       MOVE_CAMERA_ON_IMPACT = e.target.checked;
     });
 
-    // Botón de Impacto
+    // Botones
     document.getElementById('iniciarImpacto').addEventListener('click', () => {
       if (tierra && asteroide1) setupImpact();
     });
 
+    document.getElementById('analizarDanos').addEventListener('click', analyzeDamage);
+    document.getElementById('close-results').addEventListener('click', () => {
+      document.getElementById('damage-results').style.display = 'none';
+    });
+
+    // Tarjeta de información del asteroide
+    document.addEventListener('click', () => {
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(intersectables, true);
+      if (intersects.length > 0) {
+        const clickedObject = intersects[0].object;
+        const card = document.getElementById('info-card');
+        document.getElementById('asteroid-name').textContent = clickedObject.name || 'Asteroide';
+        document.getElementById('asteroid-info').textContent = `Impacto: ${IMPACTO_LAT.toFixed(2)}°, ${IMPACTO_LON.toFixed(2)}°\nRadio de daño: ${RADIO_DANO} km`;
+        document.getElementById('asteroid-img').src = 'modelos/ASTEROID1.jpg';
+        card.style.display = 'block';
+      }
+    });
+
+    document.getElementById('close-card').addEventListener('click', () => {
+      document.getElementById('info-card').style.display = 'none';
+    });
 
     // ==========================================
-    // 5. ANIMACIÓN (LOOP)
+    // 6. ANIMACIÓN (LOOP)
     // ==========================================
 
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
 
-      // Lógica de Hover (Raycasting)
+      // Raycasting para hover
       raycaster.setFromCamera(pointer, camera);
       let intersectedNow = null;
       for (let obj of intersectables) {
@@ -398,11 +628,11 @@ document.getElementById('close-card').addEventListener('click', () => {
 
         INTERSECTED = intersectedNow;
         if (INTERSECTED) INTERSECTED.traverse(child => {
-          if (child.isMesh) child.material.emissive.setHex(0xff0000); // Color rojo
+          if (child.isMesh) child.material.emissive.setHex(0xff0000);
         });
       }
 
-      // Lógica de Impacto
+      // Lógica de impacto
       if (isImpactScheduled && asteroide1) {
         if (animationClock < ANIMATION_DURATION) {
           animationClock++;
@@ -412,12 +642,9 @@ document.getElementById('close-card').addEventListener('click', () => {
           isImpactScheduled = false;
           asteroide1.position.copy(targetPosition);
           asteroide1.scale.set(0.1, 0.1, 0.1);
-          console.log("¡IMPACTO!");
 
-          // ✅ Lógica de escalado del cráter
+          // Mostrar cráter
           if (crater) {
-            // Escala base, puedes usar la escala original del asteroide para referencia,
-            // o un valor fijo para probar, como 10
             const CRATER_SIZE = 0.5;
             crater.scale.set(CRATER_SIZE, CRATER_SIZE, CRATER_SIZE);
           }
@@ -429,5 +656,4 @@ document.getElementById('close-card').addEventListener('click', () => {
     animate();
   </script>
 </body>
-
 </html>
