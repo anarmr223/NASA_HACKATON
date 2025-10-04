@@ -24,5 +24,5 @@ urlpatterns = [
 
     path('test/', test.as_view()),  
 
-    path('ateroids/', ateroids.as_view())
+    path('asteroids/', ateroids.as_view())
 ]

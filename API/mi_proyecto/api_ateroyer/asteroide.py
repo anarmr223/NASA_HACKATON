@@ -143,6 +143,24 @@ class Asteroid:
     def mass(self, value):
         self._mass = value
     
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "id": self.id,
+            "absolute_magnitude": self.absolute_magnitude,
+            "estimated_diameter": self.estimated_diameter,
+            "is_potentially_hazardous": self.is_potentially_hazardous,
+            "close_aproach_data": self.close_aproach_data,
+            "velocity": self.velocity,
+            "is_sentry_object": self.is_sentry_object,
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "latitude": self.latitude,
+            "altitude": self.altitude,
+            "mass": self.mass,
+        }
+    
 def calculateLatitude(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
     return np.arcsin(z / r)  # En radianes

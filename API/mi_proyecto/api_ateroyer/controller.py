@@ -1,7 +1,7 @@
 from datetime import date, timedelta, datetime
 import json
 import requests
-from asteroide import Asteroid
+from .asteroide import Asteroid
 import numpy as np
 import re
 
@@ -31,14 +31,11 @@ def formatData(data):
             is_sentry_object = asteroide['is_sentry_object']
 
             x, y, z, mass = getHorizonData(close_aproach_data, id, estimated_diameter)
-            print(f"x: {x}, y: {y}, z: {z}")
             asteroideOBJ = Asteroid(
                 name, id, absolute_magnitude, estimated_diameter,
                 is_potentially_hazardous, close_aproach_data,
                 velocity, is_sentry_object, x, y, z, mass
             )
-
-            print("esta es la x",asteroideOBJ.x)
 
             listAsteroides.append(asteroideOBJ)
             count += 1

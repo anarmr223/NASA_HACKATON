@@ -3,12 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import requests
 from datetime import date
-import controller
-from cacheObj import cacheObj
+from . import controller
+from . import cacheObj
 # Create your views here.
 
 apiKey = "DEMO_KEY" 
-cacheItem = cacheObj()
+cacheItem = cacheObj.cacheObj()
 
 today = date.today().strftime("%Y-%m-%d")
 class test(APIView):
@@ -26,5 +26,5 @@ class ateroids(APIView):
     def get(self, request):
 
         format_data=cacheItem.request()
-
-        return Response(format_data)
+        asteroid_data = [asteroid.to_dict() for asteroid in format_data]
+        return Response(asteroid_data)
