@@ -78,17 +78,24 @@
     top: 60px;
     left: 10px;
     width: 300px;
-    background: rgba(167, 4, 4, 0.5); /* semitransparente */
+    background: rgba(0, 0, 0, 0.7); /* negro semitransparente */
     color: white;
     padding: 10px;
     border-radius: 8px;
     display: none;
     z-index: 200;">
-    <img id="asteroid-img" src="" style="width: 100%; margin-bottom:10px;">
-    <h4 id="asteroid-name"></h4>
-    <p id="asteroid-info"></p>
-    <button id="close-card" style="margin-top:10px;">Cerrar</button>
+      
+      <h4 id="asteroid-name"></h4>
+      <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
+      <p><strong>Peligroso:</strong> <span id="asteroid-hazardous"></span></p>
+      <p><strong>Diámetro:</strong> <span id="asteroid-diameter"></span></p>
+      <p><strong>Masa:</strong> <span id="asteroid-mass"></span></p>
+      <p><strong>Velocidad:</strong> <span id="asteroid-velocity"></span></p>
+      <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
+
+      <button id="close-card" style="margin-top:10px;">Cerrar</button>
   </div>
+
 
 
   <script>
@@ -313,17 +320,35 @@
 
     //TARJETA DE INFORMACION ASTEROIDE
     document.addEventListener('click', () => {
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(intersectables, true);
-        if (intersects.length > 0) {
-            const clickedObject = intersects[0].object;
-            const card = document.getElementById('info-card');
-            document.getElementById('asteroid-name').textContent = clickedObject.name || 'Asteroide';
-            document.getElementById('asteroid-info').textContent = 'Tamaño: 10m, Velocidad: 25 km/s...'; // ejemplo
-            document.getElementById('asteroid-img').src = 'modelos/ASTEROID1.jpg'; // según cuál
-            card.style.display = 'block';
-        }
-    });
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(intersectables, true);
+
+    if (intersects.length > 0) {
+        const clickedObject = intersects[0].object;
+        const card = document.getElementById('info-card');
+
+        // Aquí asumimos que los datos vienen de userData cuando creas el objeto 3D
+        const data = clickedObject.userData || {};
+
+        // Rellenar tarjeta
+        document.getElementById('asteroid-name').textContent = data.name || 'Asteroide';
+        document.getElementById('asteroid-id').textContent = data.id || 'Desconocido';
+        document.getElementById('asteroid-hazardous').textContent = data.hazardous ? 'Sí' : 'No';
+        document.getElementById('asteroid-diameter').textContent = data.diameter ? data.diameter + ' m' : 'N/D';
+        document.getElementById('asteroid-mass').textContent = data.mass ? data.mass + ' kg' : 'N/D';
+        document.getElementById('asteroid-velocity').textContent = data.velocity ? data.velocity + ' km/h' : 'N/D';
+        document.getElementById('asteroid-distance').textContent = data.distance ? data.distance + ' km' : 'N/D';
+
+        // Mostrar tarjeta
+        card.style.display = 'block';
+    }
+});
+
+// Cerrar tarjeta
+document.getElementById('close-card').addEventListener('click', () => {
+    document.getElementById('info-card').style.display = 'none';
+});
+
 
 // Cerrar tarjeta
 document.getElementById('close-card').addEventListener('click', () => {
