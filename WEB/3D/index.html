@@ -71,6 +71,21 @@
         console.error('Error al cargar el modelo GLTF', error);
       }
     );
+    loader.load(
+      'modelos/ASTEROID2.gltf',
+      function (gltf) {
+        const asteroide = gltf.scene; // Renombrar la variable
+        asteroide.scale.set(1, 1, 1); // Ajusta la escala si es necesario
+        scene.add(asteroide);
+        console.log('Modelo GLTF cargado con éxito:', asteroide);
+      },
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% cargado');
+      },
+      function (error) {
+        console.error('Error al cargar el modelo GLTF', error);
+      }
+    );
     
     // ------------------------------------------
     // Animación
