@@ -1,0 +1,87 @@
+/* ================================================= */
+/* 3. ESTILOS DE LA BARRA DE NAVEGACIÓN */
+/* ================================================= */
+
+#main-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+#navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    /* ESTA ES LA PROPIEDAD CLAVE PARA CENTRAR EL BOTÓN */
+    justify-content: center; 
+    align-items: center;
+}
+
+/* ================================================= */
+/* 4. ESTILO DEL BOTÓN NEÓN EN LA BARRA DE NAVEGACIÓN (Botón Nav - ROJO) */
+/* ================================================= */
+
+#main-navbar #navbar-brand {
+    /* Base del botón/enlace */
+    width: auto;
+    padding: 0 1em; 
+    position: absolute;
+    height: 3.5em;
+    /* Borde del botón a ROJO */
+    border: 3px ridge #FF3366; 
+    outline: none;
+    background-color: transparent;
+    color: white;
+    transition: 1s;
+    border-radius: 0.3em;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none; 
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
+}
+
+/* Pseudo-elemento superior para el efecto de apertura */
+#main-navbar #navbar-brand::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 3%;
+    width: 95%;
+    height: 40%;
+    /* Usa el color del navbar */
+    transition: 0.5s;
+    transform-origin: center;
+}
+
+/* Pseudo-elemento inferior para el efecto de apertura */
+#main-navbar #navbar-brand::before {
+    content: "";
+    transform-origin: center;
+    position: absolute;
+    top: 80%;
+    left: 3%;
+    width: 95%;
+    height: 40%;
+    /* Usa el color del navbar */
+    transition: 0.5s;
+}
+
+/* Animación de hover: Esconde los pseudo-elementos */
+#main-navbar #navbar-brand:hover::before, 
+#main-navbar #navbar-brand:hover::after {
+    transform: scale(0);
+}
+
+/* Animación de hover: Sombra neón en el interior */
+#main-navbar #navbar-brand:hover {
+    /* Sombra de hover a ROJO */
+    box-shadow: inset 0px 0px 25px #FF003C;
+}
