@@ -2,6 +2,7 @@ from datetime import date, timedelta, datetime
 import json
 import requests
 from asteroide import Asteroid
+import numpy as np
 import re
 
 def formatData(data):
@@ -29,7 +30,7 @@ def formatData(data):
             velocity = float(close_approach['relative_velocity']['kilometers_per_second'])
             is_sentry_object = asteroide['is_sentry_object']
 
-            x, y, z, mass = getHorizonData(close_aproach_data, id)
+            x, y, z, mass = getHorizonData(close_aproach_data, id, estimated_diameter)
             print(f"x: {x}, y: {y}, z: {z}")
             asteroideOBJ = Asteroid(
                 name, id, absolute_magnitude, estimated_diameter,
@@ -44,7 +45,7 @@ def formatData(data):
 
     return listAsteroides
 
-def getHorizonData(fecha_apr, horizons_id):
+def getHorizonData(fecha_apr, horizons_id, ed):
     from datetime import datetime, timedelta
     import requests, json, re
 
@@ -86,4 +87,12 @@ def getHorizonData(fecha_apr, horizons_id):
 
     constanteGravUniversal = 6.67430e-11
     mass_kg = (gm_value * 1e9 / constanteGravUniversal) if gm_value else 0
+
+    densidad = 2500 # kg/m^3 para un promedio ya que no sabemos el tipo de asteroide
+    mass_kg = densidad*(((4/3)*np.pi)*(ed/2)**3)
+
+    radio = (ed*1000) / 2
+    volumen = (4/3) * np.pi * (radio**3)
+    mass_kg = densidad * volumen
+
     return x, y, z, mass_kg

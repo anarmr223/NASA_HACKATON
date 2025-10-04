@@ -1,4 +1,4 @@
-from django.test import TestCase
+#from django.test import TestCase
 
 from controller import formatData
 from asteroide import Asteroid
