@@ -72,6 +72,25 @@
     </div>
   </div>
 
+
+  <div id="info-card" style="
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    width: 300px;
+    background: rgba(0,0,0,0.5); /* semitransparente */
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    z-index: 200;">
+    <img id="asteroid-img" src="" style="width: 100%; margin-bottom:10px;">
+    <h4 id="asteroid-name"></h4>
+    <p id="asteroid-info"></p>
+    <button id="close-card" style="margin-top:10px;">Cerrar</button>
+  </div>
+
+
   <script>
     // ==========================================
     // 1. VARIABLES GLOBALES
@@ -292,14 +311,25 @@
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
+    //TARJETA DE INFORMACION ASTEROIDE
     document.addEventListener('click', () => {
-      raycaster.setFromCamera(pointer, camera);
-      const intersects = raycaster.intersectObjects(intersectables, true);
-      if (intersects.length > 0) {
-        const clickedObject = intersects[0].object;
-        console.log(`Se ha clicado en: ${clickedObject.name || clickedObject.parent.name || 'Objeto sin nombre'}`);
-      }
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(intersectables, true);
+        if (intersects.length > 0) {
+            const clickedObject = intersects[0].object;
+            const card = document.getElementById('info-card');
+            document.getElementById('asteroid-name').textContent = clickedObject.name || 'Asteroide';
+            document.getElementById('asteroid-info').textContent = 'Tamaño: 10m, Velocidad: 25 km/s...'; // ejemplo
+            document.getElementById('asteroid-img').src = 'modelos/ASTEROID1.jpg'; // según cuál
+            card.style.display = 'block';
+        }
     });
+
+// Cerrar tarjeta
+document.getElementById('close-card').addEventListener('click', () => {
+    document.getElementById('info-card').style.display = 'none';
+});
+
 
     // Sliders de Control
     document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => { IMPACTO_LAT = parseFloat(e.target.value); });
