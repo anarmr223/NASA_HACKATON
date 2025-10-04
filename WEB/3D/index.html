@@ -6,11 +6,11 @@
   <title>3D con GLTFLoader</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   
-  <script src="https://cdn.jsdelivr.net/npm/three@0.127.0/build/three.min.js"></script>
+  <script src="JS/three.min.js"></script>
   
-  <script src="https://cdn.jsdelivr.net/npm/three@0.127.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="JS/OrbitControls.js"></script>
   
-  <script src="https://cdn.jsdelivr.net/npm/three@0.127.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="JS/GLTFLoader.js"></script>
   
   <style>
     body { margin: 0; overflow: hidden; background: #222; }
@@ -35,6 +35,7 @@
     scene.add(ambientLight);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(5, 10, 7.5);
+    directionalLight.intensity = 3; // Aumenta la potencia de la luz
     scene.add(directionalLight);
 
     // Inicializa OrbitControls
@@ -50,16 +51,16 @@
     
     // URL de un modelo de ejemplo de Sketchfab
     // Reemplaza 'path/to/your/model.gltf' por la ruta real de tu archivo
-    const gltfUrl = 'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb'; 
+    const gltfUrl = 'modelos/ASTEROID1.gltf'; 
 
     loader.load(
       gltfUrl,
       // Función que se ejecuta cuando el recurso ha sido cargado
       function (gltf) {
-        // gltf.scene es la escena 3D cargada
-        gltf.scene.scale.set(1, 1, 1); // Ajusta la escala si es necesario
-        scene.add(gltf.scene);
-        console.log('Modelo GLTF cargado con éxito:', gltf.scene);
+        const asteroide = gltf.scene; // Renombrar la variable
+        asteroide.scale.set(1, 1, 1); // Ajusta la escala si es necesario
+        scene.add(asteroide);
+        console.log('Modelo GLTF cargado con éxito:', asteroide);
       },
       // Función que se ejecuta mientras se carga el recurso (opcional)
       function (xhr) {
