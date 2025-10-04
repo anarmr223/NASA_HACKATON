@@ -1,192 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>GLTF Hover + Impacto</title>
-<style>
-  body { margin: 0; overflow: hidden; background: #222; }
-  #loading-screen {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
-    justify-content: center; align-items: center; color: white; font-size: 24px;
-    font-family: sans-serif; z-index: 9999; transition: opacity 0.5s;
-  }
-</style>
-<script src="JS/three.min.js"></script>
-<script src="JS/OrbitControls.js"></script>
-<script src="JS/GLTFLoader.js"></script>
-</head>
-<body>
-<h1 style="color: white; position: absolute; top: 10px; left: 10px; z-index: 100;">Asteroyer TEAM</h1>
+    <meta charset="UTF-8">
+    <title>GLTF Hover + Impacto de Asteroide 3D</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<div id="loading-screen">
-  <p>Cargando Modelos y Texturas...</p>
-  <div id="progress-text">0%</div>
-</div>
+    <script src="JS/three.min.js"></script>
+    <script src="JS/OrbitControls.js"></script>
+    <script src="JS/GLTFLoader.js"></script>
 
-<div id="controls-panel" style="
-    position: absolute; top: 10px; right: 10px; background: rgba(30,30,30,0.8);
-    padding: 12px; border-radius: 8px; color: white; z-index: 100;">
-  <h3 style="margin:0 0 8px 0;">Controles</h3>
-  <div>
-      <label>Latitud impacto: <input type="range" id="IMPACTO_LAT" min="-50" max="50" step="0.1" value="-5"></label>
-  </div>
-  <div>
-      <label>Longitud impacto: <input type="range" id="IMPACTO_LON" min="-50" max="50" step="0.1" value="5"></label>
-  </div>
-  <div>
-      <label>Cámara Z: <input type="range" id="camz" min="-10" max="100" step="0.1" value="80"></label>
-  </div>
-  <div>
-      <button id="iniciarImpacto" style="margin-top: 10px; padding: 5px 10px;">Reiniciar Impacto</button>
-  </div>
-</div>
-
-
-  <div id="info-card" style="
-    position: absolute; top: 50px; right: 10px; width: 300px; 
-    background: rgba(50,50,50,0.8); color: white; 
-    padding: 10px; border-radius: 8px; display: none; z-index: 200;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5); border: 1px solid white;">
-  <img id="asteroid-img" src="" style="width: 100%; margin-bottom:10px;">
-  <h4 id="asteroid-name"></h4>
-  <p id="asteroid-info"></p>
-  <button id="close-card" style="margin-top:10px;">Cerrar</button>
-</div>
-
-
-<script>
-let camera, scene, renderer, controls, raycaster;
-let pointer = new THREE.Vector2();
-let INTERSECTED = null;
-let intersectables = [];
-let asteroide1=null, asteroide2=null, tierra=null;
-
-const totalResources = 3;
-let resourcesLoaded = 0;
-const loadingScreen = document.getElementById('loading-screen');
-const progressText = document.getElementById('progress-text');
-
-let TIERRA_RADIO = 50;
-const TIERRA_CENTER = new THREE.Vector3(0,0,-25);
-let DISTANCIA_INICIAL_ASTEROIDE = 75;
-let IMPACTO_LAT = -5;
-let IMPACTO_LON = 5;
-
-let startPosition = new THREE.Vector3();
-let targetPosition = new THREE.Vector3();
-let animationClock = 0;
-const ANIMATION_DURATION = 150;
-let isImpactScheduled = false;
-
-function latLonToVector3(lat, lon, radius) {
-    const phi = (90 - lat) * (Math.PI / 180);
-    const theta = (lon + 180) * (Math.PI / 180);
-    const x = -radius * Math.sin(phi) * Math.cos(theta);
-    const y = radius * Math.cos(phi);
-    const z = radius * Math.sin(phi) * Math.sin(theta);
-    return new THREE.Vector3(x, y, z);
-}
-
-function updateLoadingState() {
-    resourcesLoaded++;
-    if(resourcesLoaded===totalResources){
-        loadingScreen.style.opacity=0;
-        setTimeout(()=>{ loadingScreen.style.display='none'; if(tierra && asteroide1) setupImpact(); }, 500);
-    }
-}
-
-function setupImpact() {
-    animationClock=0;
-    const dir = latLonToVector3(IMPACTO_LAT, IMPACTO_LON, 1).normalize();
-    targetPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO));
-    startPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO + DISTANCIA_INICIAL_ASTEROIDE));
-    asteroide1.position.copy(startPosition);
-    asteroide1.lookAt(targetPosition);
-    asteroide1.scale.set(1,1,1);
-    isImpactScheduled=true;
-}
-
-// Init scene
-scene = new THREE.Scene();
-const cubeTextureLoader = new THREE.CubeTextureLoader();
-scene.background = cubeTextureLoader.load([
-  'modelos/skybox/right_1.jpg',
-  'modelos/skybox/left_1.jpg',
-  'modelos/skybox/up_1.jpg',
-  'modelos/skybox/down_1.jpg',
-  'modelos/skybox/front_1.jpg',
-  'modelos/skybox/back_1.jpg'
-]);
-
-camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0,20,80);
-
-renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-const directionalLight = new THREE.DirectionalLight(0xffffff,1);
-directionalLight.position.set(50,50,50);
-directionalLight.intensity = 10;
-scene.add(directionalLight);
-
-controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.target.copy(TIERRA_CENTER);
-controls.update();
-
-raycaster = new THREE.Raycaster();
-
-const loader = new THREE.GLTFLoader();
-
-// Tierra
-loader.load('modelos/earth.gltf', gltf=>{
-    tierra = gltf.scene;
-    tierra.scale.set(10,10,10);
-    tierra.position.copy(TIERRA_CENTER);
-    scene.add(tierra);
-    const box = new THREE.Box3().setFromObject(tierra);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-    TIERRA_RADIO = Math.max(size.x,size.y,size.z)/2;
-    updateLoadingState();
-});
-
-// Asteroides
-const asteroidModels = [
-    {url:'modelos/ASTEROID1.gltf', objRef: ()=>asteroide1, position:null},
-    {url:'modelos/ASTEROID2.gltf', objRef: ()=>asteroide2, position:null}
-];
-
-asteroidModels.forEach((data,i)=>{
-    loader.load(data.url, gltf=>{
-        const obj = gltf.scene;
-        obj.scale.set(1,1,1);
-        if(i===0){
-            obj.position.set(-1000,-1000,-1000); // asteroide que se mueve
-        } else {
-            obj.position.set(10,10,10); // asteroide quieto visible
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #222;
         }
-        obj.traverse(child=>{
-            if(child.isMesh) child.userData.originalEmissive = child.material.emissive.getHex();
-        });
-        scene.add(obj);
-        intersectables.push(obj);
-        if(i===0) asteroide1 = obj;
-        else asteroide2 = obj;
-        updateLoadingState();
-    });
-});
 
-// Eventos
-window.addEventListener("resize", ()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-family: sans-serif;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="color: white; position: absolute; top: 10px; left: 10px; z-index: 100;">Asteroyer TEAM</h1>
+
+    <div id="loading-screen">
+        <p>Cargando Modelos y Texturas...</p>
+        <div id="progress-text">0%</div>
+    </div>
+
+    <div id="controls-panel" style="
+        position: absolute; top: 10px; right: 10px; background: rgba(30,30,30,0.8);
+        padding: 12px; border-radius: 8px; color: white; z-index: 100;">
+        <h3 style="margin:0 0 8px 0;">Controles</h3>
+        <div>
+            <label>Latitud impacto: <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4"></label>
+        </div>
+        <div>
+            <label>Longitud impacto: <input type="range" id="IMPACTO_LON_RANGE" min="-180" max="180" step="0.1" value="-3.7"></label>
+        </div>
+        <div>
+            <label>Cámara Z: <input type="range" id="camz" min="-10" max="100" step="0.1" value="80"></label>
+        </div>
+        <div>
+            <button id="iniciarImpacto" style="margin-top: 10px; padding: 5px 10px;">Reiniciar Impacto</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. VARIABLES GLOBALES
+        // ==========================================
+        let camera, scene, renderer, controls, raycaster;
+        let pointer = new THREE.Vector2();
+        let INTERSECTED = null;
+        let intersectables = [];
+        let asteroide1 = null,
+            asteroide2 = null,
+            tierra = null;
+
+        const totalResources = 3;
+        let resourcesLoaded = 0;
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressText = document.getElementById('progress-text');
+
+        // VARIABLES DE IMPACTO (Valores para España)
+        let TIERRA_RADIO = 50;
+        const TIERRA_CENTER = new THREE.Vector3(0, 0, -25);
+        const DISTANCIA_INICIAL_ASTEROIDE = 75;
+        let IMPACTO_LAT = 40.4;
+        let IMPACTO_LON = -3.7;
+
+        let startPosition = new THREE.Vector3();
+        let targetPosition = new THREE.Vector3();
+        let animationClock = 0;
+        const ANIMATION_DURATION = 150;
+        let isImpactScheduled = false;
+
+        // ==========================================
+        // 2. FUNCIONES DE LÓGICA
+        // ==========================================
+
+        function latLonToVector3(lat, lon, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        function updateLoadingState() {
+            resourcesLoaded++;
+            if (resourcesLoaded === totalResources) {
+                // console.log("Todos los recursos cargados.");
+                loadingScreen.style.opacity = 0;
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    if (tierra && asteroide1) setupImpact();
+                }, 500);
+            }
+        }
+
+        function setupImpact() {
+            animationClock = 0;
+
+            // 1. Cálculo de Posiciones (Lógica vectorial correcta)
+            const dir = latLonToVector3(IMPACTO_LAT, IMPACTO_LON, 1).normalize();
+            targetPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO));
+            startPosition = TIERRA_CENTER.clone().add(dir.clone().multiplyScalar(TIERRA_RADIO + DISTANCIA_INICIAL_ASTEROIDE));
+
+            // 2. Rotación de la Tierra para centrar el impacto en la vista
+            tierra.rotation.y = -IMPACTO_LON * (Math.PI / 180);
+
+            // 3. Posicionar Asteroide y apuntar
+            asteroide1.position.copy(startPosition);
+            asteroide1.lookAt(targetPosition);
+            asteroide1.scale.set(1, 1, 1);
+            
+            // 4. Ajustar la cámara al impacto (Opcional, si quieres que se mueva al resetear)
+            // Si no quieres que se mueva, puedes comentar estas 3 líneas:
+            /*
+            const CAMERA_DISTANCE = 100;
+            const CAMERA_HEIGHT = 40;
+            let cameraPositionVector = dir.clone().multiplyScalar(CAMERA_DISTANCE); 
+            cameraPositionVector.y += CAMERA_HEIGHT;
+            camera.position.copy(TIERRA_CENTER).add(cameraPositionVector);
+            controls.target.copy(targetPosition);
+            controls.update();
+            */
+
+            isImpactScheduled = true;
+        }
+
+        // ==========================================
+        // 3. INICIALIZACIÓN DE THREE.JS
+        // ==========================================
+
+        scene = new THREE.Scene();
+        const cubeTextureLoader = new THREE.CubeTextureLoader();
+        scene.background = cubeTextureLoader.load([
+            'modelos/skybox/right_1.jpg',
+            'modelos/skybox/left_1.jpg',
+            'modelos/skybox/up_1.jpg',
+            'modelos/skybox/down_1.jpg',
+            'modelos/skybox/front_1.jpg',
+            'modelos/skybox/back_1.jpg'
+        ]);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 20, 80); // Posición inicial de cámara
+
+        renderer = new THREE.WebGLRenderer({
+            antialias: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(50, 50, 50);
+        directionalLight.intensity = 10;
+        scene.add(directionalLight);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.copy(TIERRA_CENTER);
+        controls.update();
+
+        raycaster = new THREE.Raycaster();
+
+        const loader = new THREE.GLTFLoader();
+
+        // Carga 1: Tierra
+        loader.load('modelos/earth.gltf', gltf => {
+            tierra = gltf.scene;
+            tierra.scale.set(10, 10, 10);
+            tierra.position.copy(TIERRA_CENTER);
+            scene.add(tierra);
+            
+            // Cálculo del radio (para que el impacto sea exacto)
+            const box = new THREE.Box3().setFromObject(tierra);
+            const size = new THREE.Vector3();
+            box.getSize(size);
+            TIERRA_RADIO = Math.max(size.x, size.y, size.z) / 2;
+            
+            updateLoadingState();
+        });
+
+        // Carga 2 & 3: Asteroides
+        const asteroidModels = [
+            { url: 'modelos/ASTEROID1.gltf', objRef: () => asteroide1, position: null },
+            { url: 'modelos/ASTEROID2.gltf', objRef: () => asteroide2, position: null }
+        ];
+
+        asteroidModels.forEach((data, i) => {
+            loader.load(data.url, gltf => {
+                const obj = gltf.scene;
+                obj.scale.set(1, 1, 1);
+                if (i === 0) {
+                    obj.position.set(-1000, -1000, -1000); // Asteroide que se mueve
+                } else {
+                    obj.position.set(10, 10, 10); // Asteroide quieto
+                }
+                
+                // Guardar el color emisivo original para el hover
+                obj.traverse(child => {
+                    if (child.isMesh) child.userData.originalEmissive = child.material.emissive.getHex();
+                });
+                
+                scene.add(obj);
+                intersectables.push(obj); // Para el raycasting
+                if (i === 0) asteroide1 = obj;
+                else asteroide2 = obj;
+                updateLoadingState();
+            });
+        });
+
+        // ==========================================
+        // 4. EVENTOS
+        // ==========================================
+
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
 document.addEventListener("mousemove", e=>{
   pointer.x=(e.clientX/window.innerWidth)*2-1; 
@@ -213,47 +269,69 @@ document.getElementById('close-card').addEventListener('click', () => {
 });
 
 
-document.getElementById('IMPACTO_LAT').addEventListener('input', e=>{IMPACTO_LAT=parseFloat(e.target.value);});
-document.getElementById('IMPACTO_LON').addEventListener('input', e=>{IMPACTO_LON=parseFloat(e.target.value);});
-document.getElementById('camz').addEventListener('input', e=>{camera.position.z=parseFloat(e.target.value); camera.updateProjectionMatrix();});
-document.getElementById('iniciarImpacto').addEventListener('click', ()=>{if(tierra&&asteroide1) setupImpact();});
+        // Sliders de Control
+        document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => { IMPACTO_LAT = parseFloat(e.target.value); });
+        document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => { IMPACTO_LON = parseFloat(e.target.value); });
+        document.getElementById('camz').addEventListener('input', e => { camera.position.z = parseFloat(e.target.value); camera.updateProjectionMatrix(); });
+        
+        // Botón de Impacto
+        document.getElementById('iniciarImpacto').addEventListener('click', () => {
+            if (tierra && asteroide1) setupImpact();
+        });
 
-function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
 
-    // Hover
-    raycaster.setFromCamera(pointer,camera);
-    let intersectedNow=null;
-    for(let obj of intersectables){
-        const intersects = raycaster.intersectObject(obj,true);
-        if(intersects.length>0){intersectedNow=obj; break;}
-    }
-    if(intersectedNow!==INTERSECTED){
-        if(INTERSECTED) INTERSECTED.traverse(child=>{if(child.isMesh) child.material.emissive.setHex(child.userData.originalEmissive);});
-        INTERSECTED=intersectedNow;
-        if(INTERSECTED) INTERSECTED.traverse(child=>{if(child.isMesh) child.material.emissive.setHex(0xff0000);});
-    }
+        // ==========================================
+        // 5. ANIMACIÓN (LOOP)
+        // ==========================================
 
-    // Impacto
-    if(isImpactScheduled && asteroide1){
-        if(animationClock<ANIMATION_DURATION){
-            animationClock++;
-            const t = animationClock/ANIMATION_DURATION;
-            asteroide1.position.lerpVectors(startPosition,targetPosition,t);
-        } else if(animationClock===ANIMATION_DURATION){
-            isImpactScheduled=false;
-            asteroide1.position.copy(targetPosition);
-            asteroide1.scale.set(0.1,0.1,0.1);
-            console.log("¡IMPACTO!");
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            // Lógica de Hover (Raycasting)
+            raycaster.setFromCamera(pointer, camera);
+            let intersectedNow = null;
+            // Solo comprobamos si hay intersección con los objetos que pueden ser intersectados
+            for (let obj of intersectables) {
+                const intersects = raycaster.intersectObject(obj, true);
+                if (intersects.length > 0) {
+                    intersectedNow = obj;
+                    break;
+                }
+            }
+
+            if (intersectedNow !== INTERSECTED) {
+                // Restaurar el color del objeto anterior (si lo había)
+                if (INTERSECTED) INTERSECTED.traverse(child => {
+                    if (child.isMesh) child.material.emissive.setHex(child.userData.originalEmissive);
+                });
+                
+                // Establecer el nuevo objeto intersectado y cambiar su color
+                INTERSECTED = intersectedNow;
+                if (INTERSECTED) INTERSECTED.traverse(child => {
+                    if (child.isMesh) child.material.emissive.setHex(0xff0000); // Color rojo
+                });
+            }
+
+            // Lógica de Impacto
+            if (isImpactScheduled && asteroide1) {
+                if (animationClock < ANIMATION_DURATION) {
+                    animationClock++;
+                    const t = animationClock / ANIMATION_DURATION;
+                    // Interpolación lineal de la posición
+                    asteroide1.position.lerpVectors(startPosition, targetPosition, t);
+                } else if (animationClock === ANIMATION_DURATION) {
+                    isImpactScheduled = false;
+                    asteroide1.position.copy(targetPosition);
+                    asteroide1.scale.set(0.1, 0.1, 0.1);
+                    console.log("¡IMPACTO!");
+                }
+            }
+
+            renderer.render(scene, camera);
         }
-    }
-
-    renderer.render(scene,camera);
-}
-animate();
-</script>
-
-
+        animate();
+    </script>
 </body>
+
 </html>
