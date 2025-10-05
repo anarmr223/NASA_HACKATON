@@ -18,7 +18,7 @@
   <h1 style="color: white; position: absolute; top: 10px; left: 10px; z-index: 100;">Asteroyer TEAM</h1>
 
   <div id="loading-screen">
-    <p>Cargando Modelos y Texturas...</p>
+    <p>Loading models and textures...</p>
     <div id="progress-text">0%</div>
   </div>
 
@@ -116,7 +116,7 @@
     async function cargarAsteroides() {
       //tenemos que llamar a una api que tenemos en python en otro pc
       try {
-        const response = await fetch('http://10.97.133.128:8000/asteroids/');
+        const response = await fetch('http://localhost:8000/asteroids/');
         const data = await response.json();
         console.log(data);
         return data;
@@ -333,14 +333,15 @@
       const progress = Math.round((resourcesLoaded / totalResources) * 100);
       progressText.textContent = `${progress}%`;
 
-      if (resourcesLoaded === totalResources) {
-        loadingScreen.style.opacity = 0;
-        setTimeout(() => {
-          loadingScreen.style.display = 'none';
-          if (tierra && asteroide1) setupImpact();
-          // Inicializar el analizador de daños
-          initializeDamageAnalyzer();
-        }, 500);
+      // Esperar a que los modelos y la lista de asteroides estén cargados
+      if (resourcesLoaded === totalResources && listaAsteroides.length > 0) {
+      loadingScreen.style.opacity = 0;
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        if (tierra && asteroide1) setupImpact();
+        // Inicializar el analizador de daños
+        initializeDamageAnalyzer();
+      }, 500);
       }
     }
 
