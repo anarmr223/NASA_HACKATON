@@ -102,93 +102,91 @@
     }*/
 
     #info-card.panel {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
-            width: 300px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            display: block; /* Cambiado a block para que se muestre directamente */
-            z-index: 200;
-            transition: box-shadow 0.3s ease;
-            
-            /* Estilos adicionales chulos */
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(24, 3, 110, 0.5);
-            box-shadow: 
-                0 0 20px rgba(102, 42, 255, 0.3),
-                0 4px 15px rgba(0, 0, 0, 0.5);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      width: 300px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      display: block;
+      /* Cambiado a block para que se muestre directamente */
+      z-index: 200;
+      transition: box-shadow 0.3s ease;
 
-        #info-card.panel:hover {
-            box-shadow: 
-                0 0 30px rgba(133, 138, 249, 0.6),
-                0 8px 25px rgba(0, 0, 0, 0.7);
-            border-color: rgba(118, 90, 255, 0.7);
-            cursor:pointer;
-        }
+      /* Estilos adicionales chulos */
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(24, 3, 110, 0.5);
+      box-shadow:
+        0 0 20px rgba(102, 42, 255, 0.3),
+        0 4px 15px rgba(0, 0, 0, 0.5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        #info-card h4 {
-            color: #1e14a4;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(42, 70, 255, 0.5);
-            border-bottom: 1px solid rgba(106, 42, 255, 0.3);
-            padding-bottom: 8px;
-        }
+    #info-card.panel:hover {
+      box-shadow:
+        0 0 30px rgba(133, 138, 249, 0.6),
+        0 8px 25px rgba(0, 0, 0, 0.7);
+      border-color: rgba(118, 90, 255, 0.7);
+      cursor: pointer;
+    }
 
-        #info-card p {
-            margin: 8px 0;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
+    #info-card h4 {
+      color: #1e14a4;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(42, 70, 255, 0.5);
+      border-bottom: 1px solid rgba(106, 42, 255, 0.3);
+      padding-bottom: 8px;
+    }
 
-        #info-card p strong {
-            color: #6e35ff;
-            font-weight: 600;
-            display: inline-block;
-            min-width: 140px;
-        }
+    #info-card p {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
 
-        #info-card p span {
-            color: #ffffff;
-            font-weight: 300;
-        }
+    #info-card p strong {
+      color: #6e35ff;
+      font-weight: 600;
+      display: inline-block;
+      min-width: 140px;
+    }
 
-        #info-card button {
-            background: linear-gradient(45deg, #5d8ef8, #5f53e9);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            width: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(85, 42, 255, 0.3);
-        }
+    #info-card p span {
+      color: #ffffff;
+      font-weight: 300;
+    }
 
-        #info-card button:hover {
-            background: linear-gradient(45deg, #3c35ff, #050d87);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(30, 15, 161, 0.5);
-        }
+    #info-card button {
+      background: linear-gradient(45deg, #5d8ef8, #5f53e9);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(85, 42, 255, 0.3);
+    }
 
-        #info-card button:active {
-            transform: translateY(0);
-        }
+    #info-card button:hover {
+      background: linear-gradient(45deg, #3c35ff, #050d87);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(30, 15, 161, 0.5);
+    }
 
-
-
+    #info-card button:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 
@@ -253,7 +251,7 @@
   </div>
 
   <!-- Tarjeta de Información del Asteroide -->
-<div id="info-card" class="panel" style="
+  <div id="info-card" class="panel" style="
     position: absolute;
     top: 50%;
     left: 10px; 
@@ -267,17 +265,17 @@
     z-index: 200;
     transition: box-shadow 0.3s ease;
 ">
-      
-      <h4 id="asteroid-name"></h4>
-      <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
-      <p><strong>Peligroso:</strong> <span id="asteroid-hazardous"></span></p>
-      <p><strong>Diámetro:</strong> <span id="asteroid-diameter"></span></p>
-      <p><strong>Masa:</strong> <span id="asteroid-mass"></span></p>
-      <p><strong>Velocidad:</strong> <span id="asteroid-velocity"></span></p>
-      <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
 
-      <button id="close-card" style="margin-top:10px;">Cerrar</button>
-</div>  
+    <h4 id="asteroid-name"></h4>
+    <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
+    <p><strong>Peligroso:</strong> <span id="asteroid-hazardous"></span></p>
+    <p><strong>Diámetro:</strong> <span id="asteroid-diameter"></span></p>
+    <p><strong>Masa:</strong> <span id="asteroid-mass"></span></p>
+    <p><strong>Velocidad:</strong> <span id="asteroid-velocity"></span></p>
+    <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
+
+    <button id="close-card" style="margin-top:10px;">Cerrar</button>
+  </div>
 
 
 
@@ -304,25 +302,32 @@
       }
 
     }
+    const select = document.getElementById("asteroid-select");
+
     cargarAsteroides().then(data => {
       if (data) {
         listaAsteroides = data;
         console.log("Asteroides cargados:", listaAsteroides);
+
+        // Vaciar por si acaso
+        select.innerHTML = "";
+
+        // Crear una opción por cada asteroide
+        listaAsteroides.forEach(asteroide => {
+          const option = document.createElement("option");
+
+          // 1. Set the internal value (the ID)
+          option.value = asteroide.id;
+
+          // 2. Set the visible text (the name)
+          option.textContent = asteroide.name;
+
+          // 3. Append the option to the select element
+          select.appendChild(option);
+        });
       } else {
         console.error("Error al cargar asteroides");
       }
-    });
-    const select = document.getElementById("asteroid-select");
-
-    // Vaciar por si acaso
-    select.innerHTML = "";
-
-    // Crear una opción por cada asteroide
-    listaAsteroides.forEach(asteroide => {
-      const option = document.createElement("option");
-      option.value = asteroide.id;      // valor interno
-      option.textContent = asteroide.nombre;  // texto visible
-      select.appendChild(option);
     });
 
     // Evento para cuando el usuario elija uno
