@@ -116,7 +116,9 @@
     async function cargarAsteroides() {
       //tenemos que llamar a una api que tenemos en python en otro pc
       try {
-        const response = await fetch('http://212.227.145.123:8000/asteroids/');
+        const response = await fetch('https://www.twodoubleohs.com/asteroids-api/', {
+          method: 'GET'
+        });
         const data = await response.json();
         console.log(data);
         return data;
@@ -335,13 +337,13 @@
 
       // Esperar a que los modelos y la lista de asteroides estén cargados
       if (resourcesLoaded === totalResources && listaAsteroides.length > 0) {
-      loadingScreen.style.opacity = 0;
-      setTimeout(() => {
-        loadingScreen.style.display = 'none';
-        if (tierra && asteroide1) setupImpact();
-        // Inicializar el analizador de daños
-        initializeDamageAnalyzer();
-      }, 500);
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          if (tierra && asteroide1) setupImpact();
+          // Inicializar el analizador de daños
+          initializeDamageAnalyzer();
+        }, 500);
       }
     }
 
