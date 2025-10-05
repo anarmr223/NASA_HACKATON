@@ -219,7 +219,7 @@
 
     <div style="margin-bottom: 8px;">
       <label>Radio de Daño: <span id="radius-value">500</span> km</label>
-      <input type="range" id="RADIO_IMPACTO" min="100" max="2000" step="50" value="500">
+      <input type="range" id="RADIO_IMPACTO" min="100" step="50" value="500">
     </div>
 
     <div style="margin-bottom: 10px;">
@@ -333,6 +333,40 @@
     // Evento para cuando el usuario elija uno
     select.addEventListener("change", () => {
       console.log("Seleccionaste:", select.value);
+      const asteroideSeleccionado = listaAsteroides.find(a => a.id == select.value);
+      if (asteroideSeleccionado) {
+        // Cambiar latitud, longitud y radio según masa y velocidad
+        IMPACTO_LAT = asteroideSeleccionado.latitude || IMPACTO_LAT;
+        IMPACTO_LON = asteroideSeleccionado.altitude || IMPACTO_LON;
+
+        // Ejemplo de cálculo de radio: proporcional a masa y velocidad
+        // Ajusta la fórmula según tu modelo físico
+        if (asteroideSeleccionado.mass && asteroideSeleccionado.velocity) {
+          RADIO_DANO = Math.min(
+            2000,
+            Math.max(
+              100,
+              Math.round(
+                (asteroideSeleccionado.mass * asteroideSeleccionado.velocity) / 1e7
+              )
+            )
+          );
+        }
+
+        // Actualiza los controles visuales
+        document.getElementById('IMPACTO_LAT_RANGE').value = IMPACTO_LAT;
+        document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
+
+        document.getElementById('IMPACTO_LON_RANGE').value = IMPACTO_LON;
+        document.getElementById('lon-value').textContent = IMPACTO_LON.toFixed(1);
+
+        document.getElementById('RADIO_IMPACTO').value = RADIO_DANO;
+        document.getElementById('radius-value').textContent = RADIO_DANO;
+
+        // Opcional: actualizar la simulación
+        if (tierra && asteroide1) setupImpact();
+        console.log(`Impacto en Lat: ${IMPACTO_LAT}, Lon: ${IMPACTO_LON}, Radio: ${RADIO_DANO} km`);
+      }
     });
 
 
@@ -709,6 +743,11 @@
     });
 
 
+    document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => {
+      IMPACTO_LAT = parseFloat(e.target.value);
+      document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
+    });
+
     document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => {
       IMPACTO_LON = parseFloat(e.target.value);
       document.getElementById('lon-value').textContent = IMPACTO_LON.toFixed(1);
@@ -718,7 +757,6 @@
       RADIO_DANO = parseFloat(e.target.value);
       document.getElementById('radius-value').textContent = RADIO_DANO;
     });
-
     document.getElementById('moverCamara').addEventListener('change', e => {
       MOVE_CAMERA_ON_IMPACT = e.target.checked;
     });
@@ -794,7 +832,8 @@
 
           // Mostrar cráter
           if (crater) {
-            const CRATER_SIZE = 0.5;
+
+            const CRATER_SIZE = 0.5 * RADIO_DANO / 500; // Escala base ajustada por radio de daño
             crater.scale.set(CRATER_SIZE, CRATER_SIZE, CRATER_SIZE);
           }
         }
