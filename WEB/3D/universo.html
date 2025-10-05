@@ -116,7 +116,7 @@
     async function cargarAsteroides() {
       //tenemos que llamar a una api que tenemos en python en otro pc
       try {
-        const response = await fetch('http://localhost:8000/asteroids/');
+        const response = await fetch('http://212.227.145.123:8000/asteroids/');
         const data = await response.json();
         console.log(data);
         return data;
