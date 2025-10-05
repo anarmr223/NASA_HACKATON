@@ -14,7 +14,7 @@
 
   <style>
     body {
-      
+
       margin: 0;
       overflow: hidden;
       background: #222;
@@ -47,11 +47,30 @@
       backdrop-filter: blur(5px);
     }
 
-    .severity-critical { border-left: 4px solid #ff0000; background: rgba(255, 0, 0, 0.2); }
-    .severity-high { border-left: 4px solid #ff6b00; background: rgba(255, 107, 0, 0.2); }
-    .severity-medium { border-left: 4px solid #ffa500; background: rgba(255, 165, 0, 0.2); }
-    .severity-low { border-left: 4px solid #ffff00; background: rgba(255, 255, 0, 0.2); }
-    .severity-minimal { border-left: 4px solid #00ff00; background: rgba(0, 255, 0, 0.2); }
+    .severity-critical {
+      border-left: 4px solid #ff0000;
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .severity-high {
+      border-left: 4px solid #ff6b00;
+      background: rgba(255, 107, 0, 0.2);
+    }
+
+    .severity-medium {
+      border-left: 4px solid #ffa500;
+      background: rgba(255, 165, 0, 0.2);
+    }
+
+    .severity-low {
+      border-left: 4px solid #ffff00;
+      background: rgba(255, 255, 0, 0.2);
+    }
+
+    .severity-minimal {
+      border-left: 4px solid #00ff00;
+      background: rgba(0, 255, 0, 0.2);
+    }
 
     .country-item {
       padding: 8px;
@@ -184,12 +203,31 @@
   <!-- Panel de Controles Principal -->
   <div id="controls-panel" class="panel" style="position: absolute; top: 10px; right: 10px; width: 300px;">
     <h3 style="margin:0 0 12px 0;">Controles de Impacto</h3>
-    
+
+    <div style="margin-bottom: 8px;">
+      <label>Seleccionar asteroide: <span id="selected-asteroid"></span></label>
+      <script>
+        // Mostrar el primer asteroide de la lista cuando esté disponible
+        function mostrarPrimerAsteroide() {
+          if (listaAsteroides && listaAsteroides.length > 0) {
+        document.getElementById('selected-asteroid').textContent = listaAsteroides[0].name || 'Asteroide';
+          } else {
+        document.getElementById('selected-asteroid').textContent = 'Cargando...';
+          }
+        }
+        // Actualizar cuando se cargue la lista
+        cargarAsteroides().then(data => {
+          listaAsteroides = data || [];
+          mostrarPrimerAsteroide();
+        });
+      </script>
+      <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
+    </div>
     <div style="margin-bottom: 8px;">
       <label>Latitud: <span id="lat-value">40.4</span>°</label>
       <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
     </div>
-    
+
     <div style="margin-bottom: 8px;">
       <label>Longitud: <span id="lon-value">-3.7</span>°</label>
       <input type="range" id="IMPACTO_LON_RANGE" min="-180" max="180" step="0.1" value="-3.7">
@@ -265,6 +303,30 @@
     let pointer = new THREE.Vector2();
     let INTERSECTED = null;
     let intersectables = [];
+    let listaAsteroides = [];
+    //cargar de asteroides
+    async function cargarAsteroides() {
+      //tenemos que llamar a una api que tenemos en python en otro pc
+      try {
+        const response = await fetch('http://10.97.133.128:8000/asteroids/');
+        const data = await response.json();
+        console.log(data);
+        return data;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+
+    }
+    cargarAsteroides().then(data => {
+      if (data) {
+        listaAsteroides = data;
+        console.log("Asteroides cargados:", listaAsteroides);
+      } else {
+        console.error("Error al cargar asteroides");
+      }
+    });
+
     let asteroide1 = null, asteroide2 = null, tierra = null, crater = null;
 
     const totalResources = 3;
@@ -320,7 +382,7 @@
 
         // Crear punto de impacto
         const impactPoint = turf.point([impactLon, impactLat]);
-        
+
         // Crear círculo de daño
         const damageRadius = turf.circle(impactPoint, radiusKm, {
           steps: 32,
@@ -332,15 +394,15 @@
         // Verificar cada país
         this.countriesData.features.forEach(country => {
           const countryGeometry = country.geometry;
-          
+
           // Verificar intersección
           const intersects = turf.booleanIntersects(damageRadius, countryGeometry);
-          
+
           if (intersects) {
             // Calcular porcentaje de afectación
             const intersection = turf.intersect(damageRadius, countryGeometry);
             let affectedPercentage = 0;
-            
+
             if (intersection) {
               try {
                 const countryArea = turf.area(countryGeometry);
@@ -403,7 +465,7 @@
       resourcesLoaded++;
       const progress = Math.round((resourcesLoaded / totalResources) * 100);
       progressText.textContent = `${progress}%`;
-      
+
       if (resourcesLoaded === totalResources) {
         loadingScreen.style.opacity = 0;
         setTimeout(() => {
@@ -474,9 +536,9 @@
     function displayDamageResults(countries) {
       const resultsDiv = document.getElementById('results-list');
       const panel = document.getElementById('damage-results');
-      
+
       resultsDiv.innerHTML = '';
-      
+
       if (countries.length === 0) {
         resultsDiv.innerHTML = '<p style="text-align: center; color: #ccc;">No hay países afectados en este radio</p>';
       } else {
@@ -495,7 +557,7 @@
           resultsDiv.appendChild(div);
         });
       }
-      
+
       panel.style.display = 'block';
     }
 
@@ -608,10 +670,10 @@
 
     //TARJETA DE INFORMACION ASTEROIDE
     document.addEventListener('click', () => {
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(intersectables, true);
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(intersectables, true);
 
-    if (intersects.length > 0) {
+      if (intersects.length > 0) {
         const clickedObject = intersects[0].object;
         const card = document.getElementById('info-card');
 
@@ -629,13 +691,13 @@
 
         // Mostrar tarjeta
         card.style.display = 'block';
-    }
-});
+      }
+    });
 
-// Cerrar tarjeta
-document.getElementById('close-card').addEventListener('click', () => {
-    document.getElementById('info-card').style.display = 'none';
-});
+    // Cerrar tarjeta
+    document.getElementById('close-card').addEventListener('click', () => {
+      document.getElementById('info-card').style.display = 'none';
+    });
 
 
     document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => {
@@ -734,4 +796,5 @@ document.getElementById('close-card').addEventListener('click', () => {
     animate();
   </script>
 </body>
+
 </html>

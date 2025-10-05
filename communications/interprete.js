@@ -1,6 +1,6 @@
 async function getData() {
   try {
-    const response = await fetch('http://127.0.0.1:8000/asteroids/');
+    const response = await fetch('http://10.97.133.128:8000/asteroids/');
     const data = await response.json();
     console.log(data);
     return data;
