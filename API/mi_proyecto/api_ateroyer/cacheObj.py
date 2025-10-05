@@ -42,14 +42,17 @@ class cacheObj:
 
         url = f"https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&api_key={apiKey}"
 
-        # 🚀 OPCIÓN 1: Leer desde la API NASA
-        # response = requests.get(url)
-        # data = response.json()
+        #llamada a la api
+        response = requests.get(url)
+        data = response.json()
 
-        # 🚀 OPCIÓN 2: Leer desde archivo local (más rápido para pruebas)
-        file_path = os.path.join(settings.BASE_DIR, "prueba", "data.json")
-        with open(file_path, "r") as file:
-            data = json.load(file) 
+        #pruebas
+        #file_path = os.path.join(settings.BASE_DIR, "prueba", "data.json")
+        #with open(file_path, "r") as file:
+        #    data = json.load(file) 
 
         self._cache = formatData(data)
         self._fechaCache = datetime.now().date()
+
+    def __str__(self):
+        return f"cache: {self.cache}, tiempo exp: {self.fechaCache}"
