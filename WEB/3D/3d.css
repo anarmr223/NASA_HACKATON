@@ -1,0 +1,174 @@
+    body {
+
+      margin: 0;
+      overflow: hidden;
+      background: #222;
+      font-family: Arial, sans-serif;
+    }
+
+    #loading-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+
+    .panel {
+      background: rgba(30, 30, 30, 0.85);
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .severity-critical {
+      border-left: 4px solid #ff0000;
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .severity-high {
+      border-left: 4px solid #ff6b00;
+      background: rgba(255, 107, 0, 0.2);
+    }
+
+    .severity-medium {
+      border-left: 4px solid #ffa500;
+      background: rgba(255, 165, 0, 0.2);
+    }
+
+    .severity-low {
+      border-left: 4px solid #ffff00;
+      background: rgba(255, 255, 0, 0.2);
+    }
+
+    .severity-minimal {
+      border-left: 4px solid #00ff00;
+      background: rgba(0, 255, 0, 0.2);
+    }
+
+    .country-item {
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 120px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px 0;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    /*#info-card:hover {
+      box-shadow: 0 0 20px 5px white; /* sombra blanca alrededor 
+    }*/
+
+    #info-card.panel {
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      width: 300px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      display: block;
+      /* Cambiado a block para que se muestre directamente */
+      z-index: 200;
+      transition: box-shadow 0.3s ease;
+
+      /* Estilos adicionales chulos */
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(24, 3, 110, 0.5);
+      box-shadow:
+        0 0 20px rgba(102, 42, 255, 0.3),
+        0 4px 15px rgba(0, 0, 0, 0.5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #info-card.panel:hover {
+      box-shadow:
+        0 0 30px rgba(133, 138, 249, 0.6),
+        0 8px 25px rgba(0, 0, 0, 0.7);
+      border-color: rgba(118, 90, 255, 0.7);
+      cursor: pointer;
+    }
+
+    #info-card h4 {
+      color: #1e14a4;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(42, 70, 255, 0.5);
+      border-bottom: 1px solid rgba(106, 42, 255, 0.3);
+      padding-bottom: 8px;
+    }
+
+    #info-card p {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    #info-card p strong {
+      color: #6e35ff;
+      font-weight: 600;
+      display: inline-block;
+      min-width: 140px;
+    }
+
+    #info-card p span {
+      color: #ffffff;
+      font-weight: 300;
+    }
+
+    #info-card button {
+      background: linear-gradient(45deg, #5d8ef8, #5f53e9);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(85, 42, 255, 0.3);
+    }
+
+    #info-card button:hover {
+      background: linear-gradient(45deg, #3c35ff, #050d87);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(30, 15, 161, 0.5);
+    }
+
+    #info-card button:active {
+      transform: translateY(0);
+    }

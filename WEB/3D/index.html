@@ -5,266 +5,13 @@
   <meta charset="UTF-8">
   <title>GLTF Hover + Impacto de Asteroide 3D</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel="stylesheet" href="3d.css">
 
   <script src="JS/three.min.js"></script>
   <script src="JS/OrbitControls.js"></script>
   <script src="JS/GLTFLoader.js"></script>
   <!-- Incluir Turf.js desde CDN -->
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
-
-  <style>
-    body {
-
-      margin: 0;
-      overflow: hidden;
-      background: #222;
-      font-family: Arial, sans-serif;
-    }
-
-    #loading-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 24px;
-      z-index: 9999;
-      transition: opacity 0.5s;
-    }
-
-    .panel {
-      background: rgba(30, 30, 30, 0.85);
-      padding: 15px;
-      border-radius: 10px;
-      color: white;
-      z-index: 100;
-      backdrop-filter: blur(5px);
-    }
-
-    .severity-critical {
-      border-left: 4px solid #ff0000;
-      background: rgba(255, 0, 0, 0.2);
-    }
-
-    .severity-high {
-      border-left: 4px solid #ff6b00;
-      background: rgba(255, 107, 0, 0.2);
-    }
-
-    .severity-medium {
-      border-left: 4px solid #ffa500;
-      background: rgba(255, 165, 0, 0.2);
-    }
-
-    .severity-low {
-      border-left: 4px solid #ffff00;
-      background: rgba(255, 255, 0, 0.2);
-    }
-
-    .severity-minimal {
-      border-left: 4px solid #00ff00;
-      background: rgba(0, 255, 0, 0.2);
-    }
-
-    .country-item {
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
-    input[type="range"] {
-      width: 120px;
-    }
-
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 5px 0;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    /*#info-card:hover {
-      box-shadow: 0 0 20px 5px white; /* sombra blanca alrededor 
-    }*/
-
-    #info-card.panel {
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      transform: translateY(-50%);
-      width: 300px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      display: block;
-      /* Cambiado a block para que se muestre directamente */
-      z-index: 200;
-      transition: box-shadow 0.3s ease;
-
-      /* Estilos adicionales chulos */
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(24, 3, 110, 0.5);
-      box-shadow:
-        0 0 20px rgba(102, 42, 255, 0.3),
-        0 4px 15px rgba(0, 0, 0, 0.5);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      transform: translateY(-50%);
-      width: 300px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      display: block;
-      /* Cambiado a block para que se muestre directamente */
-      z-index: 200;
-      transition: box-shadow 0.3s ease;
-
-      /* Estilos adicionales chulos */
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(24, 3, 110, 0.5);
-      box-shadow:
-        0 0 20px rgba(102, 42, 255, 0.3),
-        0 4px 15px rgba(0, 0, 0, 0.5);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    #info-card.panel:hover {
-      box-shadow:
-        0 0 30px rgba(133, 138, 249, 0.6),
-        0 8px 25px rgba(0, 0, 0, 0.7);
-      border-color: rgba(118, 90, 255, 0.7);
-      cursor: pointer;
-    }
-    #info-card.panel:hover {
-      box-shadow:
-        0 0 30px rgba(133, 138, 249, 0.6),
-        0 8px 25px rgba(0, 0, 0, 0.7);
-      border-color: rgba(118, 90, 255, 0.7);
-      cursor: pointer;
-    }
-
-    #info-card h4 {
-      color: #1e14a4;
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(42, 70, 255, 0.5);
-      border-bottom: 1px solid rgba(106, 42, 255, 0.3);
-      padding-bottom: 8px;
-    }
-    #info-card h4 {
-      color: #1e14a4;
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(42, 70, 255, 0.5);
-      border-bottom: 1px solid rgba(106, 42, 255, 0.3);
-      padding-bottom: 8px;
-    }
-
-    #info-card p {
-      margin: 8px 0;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-    #info-card p {
-      margin: 8px 0;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    #info-card p strong {
-      color: #6e35ff;
-      font-weight: 600;
-      display: inline-block;
-      min-width: 140px;
-    }
-    #info-card p strong {
-      color: #6e35ff;
-      font-weight: 600;
-      display: inline-block;
-      min-width: 140px;
-    }
-
-    #info-card p span {
-      color: #ffffff;
-      font-weight: 300;
-    }
-    #info-card p span {
-      color: #ffffff;
-      font-weight: 300;
-    }
-
-    #info-card button {
-      background: linear-gradient(45deg, #5d8ef8, #5f53e9);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.85rem;
-      margin-top: 10px;
-      width: 100%;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 10px rgba(85, 42, 255, 0.3);
-    }
-    #info-card button {
-      background: linear-gradient(45deg, #5d8ef8, #5f53e9);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.85rem;
-      margin-top: 10px;
-      width: 100%;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 10px rgba(85, 42, 255, 0.3);
-    }
-
-    #info-card button:hover {
-      background: linear-gradient(45deg, #3c35ff, #050d87);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(30, 15, 161, 0.5);
-    }
-    #info-card button:hover {
-      background: linear-gradient(45deg, #3c35ff, #050d87);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(30, 15, 161, 0.5);
-    }
-
-    #info-card button:active {
-      transform: translateY(0);
-    }
-    #info-card button:active {
-      transform: translateY(0);
-    }
-  </style>
 </head>
 
 <body>
@@ -280,23 +27,8 @@
     <h3 style="margin:0 0 12px 0;">Controles de Impacto</h3>
 
     <div style="margin-bottom: 8px;">
-      <label>Seleccionar asteroide: <span id="selected-asteroid"></span></label>
-      <script>
-        // Mostrar el primer asteroide de la lista cuando esté disponible
-        function mostrarPrimerAsteroide() {
-          if (listaAsteroides && listaAsteroides.length > 0) {
-            document.getElementById('selected-asteroid').textContent = listaAsteroides[0].name || 'Asteroide';
-          } else {
-            document.getElementById('selected-asteroid').textContent = 'Cargando...';
-          }
-        }
-        // Actualizar cuando se cargue la lista
-        cargarAsteroides().then(data => {
-          listaAsteroides = data || [];
-          mostrarPrimerAsteroide();
-        });
-      </script>
-      <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
+      <label for="asteroid-select">Seleccionar asteroide:</label>
+      <select id="asteroid-select"></select>
     </div>
 
     <div style="margin-bottom: 8px;">
@@ -311,7 +43,7 @@
 
     <div style="margin-bottom: 8px;">
       <label>Radio de Daño: <span id="radius-value">500</span> km</label>
-      <input type="range" id="RADIO_IMPACTO" min="100" max="2000" step="50" value="500">
+      <input type="range" id="RADIO_IMPACTO" min="100" step="50" value="500">
     </div>
 
     <div style="margin-bottom: 10px;">
@@ -366,16 +98,6 @@
     <p><strong>Velocidad:</strong> <span id="asteroid-velocity"></span></p>
     <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
 
-    <h4 id="asteroid-name"></h4>
-    <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
-    <p><strong>Peligroso:</strong> <span id="asteroid-hazardous"></span></p>
-    <p><strong>Diámetro:</strong> <span id="asteroid-diameter"></span></p>
-    <p><strong>Masa:</strong> <span id="asteroid-mass"></span></p>
-    <p><strong>Velocidad:</strong> <span id="asteroid-velocity"></span></p>
-    <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
-
-    <button id="close-card" style="margin-top:10px;">Cerrar</button>
-  </div>
     <button id="close-card" style="margin-top:10px;">Cerrar</button>
   </div>
 
@@ -435,6 +157,40 @@
     // Evento para cuando el usuario elija uno
     select.addEventListener("change", () => {
       console.log("Seleccionaste:", select.value);
+      const asteroideSeleccionado = listaAsteroides.find(a => a.id == select.value);
+      if (asteroideSeleccionado) {
+        // Cambiar latitud, longitud y radio según masa y velocidad
+        IMPACTO_LAT = asteroideSeleccionado.latitude || IMPACTO_LAT;
+        IMPACTO_LON = asteroideSeleccionado.altitude || IMPACTO_LON;
+
+        // Ejemplo de cálculo de radio: proporcional a masa y velocidad
+        // Ajusta la fórmula según tu modelo físico
+        if (asteroideSeleccionado.mass && asteroideSeleccionado.velocity) {
+          RADIO_DANO = Math.min(
+            2000,
+            Math.max(
+              100,
+              Math.round(
+                (asteroideSeleccionado.mass * asteroideSeleccionado.velocity) / 1e7
+              )
+            )
+          );
+        }
+
+        // Actualiza los controles visuales
+        document.getElementById('IMPACTO_LAT_RANGE').value = IMPACTO_LAT;
+        document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
+
+        document.getElementById('IMPACTO_LON_RANGE').value = IMPACTO_LON;
+        document.getElementById('lon-value').textContent = IMPACTO_LON.toFixed(1);
+
+        document.getElementById('RADIO_IMPACTO').value = RADIO_DANO;
+        document.getElementById('radius-value').textContent = RADIO_DANO;
+
+        // Opcional: actualizar la simulación
+        if (tierra && asteroide1) setupImpact();
+        console.log(`Impacto en Lat: ${IMPACTO_LAT}, Lon: ${IMPACTO_LON}, Radio: ${RADIO_DANO} km`);
+      }
     });
 
 
@@ -788,35 +544,33 @@
         const clickedObject = intersects[0].object;
         const card = document.getElementById('info-card');
 
-        // Buscar asteroide por nombre (ya está comprobado que coincide)
-        const asteroid = listaAsteroides.find(ast => ast.name === clickedObject.name);
+        // Aquí asumimos que los datos vienen de userData cuando creas el objeto 3D
+        const data = clickedObject.userData || {};
 
-        // Rellenar tarjeta directamente
-        document.getElementById('asteroid-name').textContent = asteroid.name;
-        console.log(asteroid.name);
-        document.getElementById('asteroid-id').textContent = asteroid.id;
-        console.log(asteroid.id);
-        document.getElementById('asteroid-hazardous').textContent = asteroid.is_potentially_hazardous ? 'Sí' : 'No';
-        console.log(asteroid.is_potentially_hazardous);
-        document.getElementById('asteroid-diameter').textContent = asteroid.estimated_diameter + ' km';
-        console.log(asteroid.estimated_diameter);
-        document.getElementById('asteroid-mass').textContent = asteroid.mass + ' kg';
-        console.log(asteroid.mass);
-        document.getElementById('asteroid-velocity').textContent = asteroid.velocity + ' km/s';
-        console.log(asteroid.velocity);
-        document.getElementById('asteroid-distance').textContent = asteroid.altitude + ' km';
-        console.log(asteroid.altitude);
+        // Rellenar tarjeta
+        document.getElementById('asteroid-name').textContent = data.name || 'Asteroide';
+        document.getElementById('asteroid-id').textContent = data.id || 'Desconocido';
+        document.getElementById('asteroid-hazardous').textContent = data.hazardous ? 'Sí' : 'No';
+        document.getElementById('asteroid-diameter').textContent = data.diameter ? data.diameter + ' m' : 'N/D';
+        document.getElementById('asteroid-mass').textContent = data.mass ? data.mass + ' kg' : 'N/D';
+        document.getElementById('asteroid-velocity').textContent = data.velocity ? data.velocity + ' km/h' : 'N/D';
+        document.getElementById('asteroid-distance').textContent = data.distance ? data.distance + ' km' : 'N/D';
+
         // Mostrar tarjeta
         card.style.display = 'block';
       }
     });
-
 
     // Cerrar tarjeta
     document.getElementById('close-card').addEventListener('click', () => {
       document.getElementById('info-card').style.display = 'none';
     });
 
+
+    document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => {
+      IMPACTO_LAT = parseFloat(e.target.value);
+      document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
+    });
 
     document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => {
       IMPACTO_LON = parseFloat(e.target.value);
@@ -827,7 +581,6 @@
       RADIO_DANO = parseFloat(e.target.value);
       document.getElementById('radius-value').textContent = RADIO_DANO;
     });
-
     document.getElementById('moverCamara').addEventListener('change', e => {
       MOVE_CAMERA_ON_IMPACT = e.target.checked;
     });
@@ -903,7 +656,8 @@
 
           // Mostrar cráter
           if (crater) {
-            const CRATER_SIZE = 0.5;
+
+            const CRATER_SIZE = 0.5 * RADIO_DANO / 500; // Escala base ajustada por radio de daño
             crater.scale.set(CRATER_SIZE, CRATER_SIZE, CRATER_SIZE);
           }
         }
