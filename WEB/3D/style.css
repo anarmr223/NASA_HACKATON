@@ -8,7 +8,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0; 
     min-height: 100vh;
-    padding-top: 70px; 
+     
 }
 
 /* Restablece los márgenes para todos los elementos importantes */
@@ -34,6 +34,85 @@ section {
     /* Espacio vertical entre las grandes secciones */
     padding: 60px 0; 
     text-align: center;
+}
+
+/* ================================================= */
+/* 2. FONDO ANIMADO NAV */
+/* ================================================= */
+
+/* Fondo animado */
+.container {
+  position: absolute;   /* posición absoluta dentro del header */
+  inset: 0;             /* ocupa todo el header */
+  z-index: 0;           /* detrás del contenido */
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  inset: -145%;
+  background: #000000;
+  background-image: 
+    /* tus estrellas de color originales */
+    radial-gradient(4px 100px at 0px 235px, rgb(255, 140, 17), #0000),
+    radial-gradient(4px 100px at 300px 235px, rgb(255, 119, 0), #884e2800),
+    radial-gradient(1.5px 1.5px at 150px 117.5px, rgb(215, 99, 5) 100%, #0000),
+    /* muchas estrellas blancas pequeñas */
+    radial-gradient(1px 1px at 50px 50px, #fff, transparent),
+    radial-gradient(1px 1px at 120px 80px, #fff, transparent),
+    radial-gradient(0.8px 0.8px at 200px 150px, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 250px 100px, #fff, transparent),
+    radial-gradient(0.9px 0.9px at 300px 200px, #fff, transparent),
+    radial-gradient(1px 1px at 350px 50px, #fff, transparent),
+    radial-gradient(0.7px 0.7px at 400px 180px, #fff, transparent),
+    radial-gradient(1px 1px at 450px 220px, #fff, transparent);
+    
+  background-size: 300px 235px, 300px 235px, 300px 235px, auto;
+  animation: hi 150s linear infinite;
+}
+
+@keyframes hi {
+  0% {
+    background-position: 0px 220px, 3px 220px, 151.5px 337.5px; /* todas tus posiciones iniciales */
+  }
+  100% {
+    background-position: 0px 6800px, 3px 6800px, 151.5px 6917.5px; /* todas tus posiciones finales */
+  }
+}
+
+/* Header y contenido por encima del fondo */
+header {
+  position: relative; /* para que el container absoluto se posicione dentro */
+  overflow: hidden;   /* evita que se salga el fondo animado */
+  height: 100px;      /* ajusta según tu nav */
+  z-index: 1;
+}
+
+#main-navbar {
+  position: relative; /* para que quede encima del fondo */
+  z-index: 1;
+  padding: 20px;
+}
+
+#navbar-brand {
+  color: #9b2204;              /* dorado brillante para destacar */
+  font-size: 32px;             /* más grande */
+  font-weight: 900;            /* grueso y llamativo */
+  text-transform: uppercase;   /* mayúsculas para más presencia */
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7); /* sombra para resaltar sobre el fondo */
+  text-decoration: none;
+  position: absolute;          /* para centrarlo fácilmente */
+  top: 50%;                    /* vertical center */
+  left: 50%;                   /* horizontal center */
+  transform: translate(-50%, -50%); /* ajuste exacto del centro */
+  z-index: 2;                  /* encima del fondo */
+  font-family: 'Orbitron', sans-serif; /* fuente futurista, opcional */
+  letter-spacing: 2px;         /* separación de letras estilo “tech” */
+  transition: transform 0.3s ease; /* efecto hover opcional */
+}
+
+#navbar-brand:hover {
+  transform: translate(-50%, -50%) scale(1.05); /* efecto sutil al pasar el mouse */
 }
 
 
@@ -310,9 +389,9 @@ section {
   display: flex;
   flex-wrap: wrap;           
   gap: 30px;
-  justify-content: flex-start;  
+  justify-content: center;  /* centra horizontalmente las cartas */
   align-items: flex-start;
-  padding: 100px 20px; /* menos padding lateral */
+  padding: 100px 20px; 
   box-sizing: border-box;
 }
 
@@ -373,7 +452,7 @@ section {
 
 .card:hover::before {
   transform: scaleX(1.02) scaleY(1.02);
-  box-shadow: 0px 0px 30px 0px hsla(5, 100%, 48%, 0.8);
+  box-shadow: 0px 0px 30px 0px hsla(48, 94%, 50%, 0.8);
 }
 
 /* Responsive: en móvil vuelven a ser 1 columna */
@@ -425,9 +504,9 @@ section {
 #team-members {
   background-color: #1c1c1c;
   color: white;
-  padding: 2rem 0;
+  padding: 1rem 0;
   text-align: center;
-  margin-top: 4rem; /* separa visualmente del contenido anterior */
+  margin-top: 2rem; /* separa visualmente del contenido anterior */
 }
 
 #team-title {
@@ -445,9 +524,9 @@ section {
 
 .member-card {
   background-color: #2b2b2b;
-  padding: 1.5rem;
+  padding: 1.1rem;
   border-radius: 12px;
-  width: 220px;
+  width: 150px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
 }
