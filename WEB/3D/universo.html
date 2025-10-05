@@ -155,12 +155,35 @@
         console.error("Error al cargar asteroides");
       }
     });
+    function actualizarCardAsteroide(asteroide) {
+      document.getElementById('asteroid-name').textContent = asteroide.name;
+      document.getElementById('asteroid-id').textContent = asteroide.id;
+      document.getElementById('asteroid-hazardous').textContent = asteroide.is_potentially_hazardous ? "Sí" : "No";
+
+      // Diámetro en km
+      document.getElementById('asteroid-diameter').textContent = asteroide.estimated_diameter.toFixed(3) + " km";
+
+      // Masa en kg
+      document.getElementById('asteroid-mass').textContent = asteroide.mass.toExponential() + " kg";
+
+      // Velocidad en km/s
+      document.getElementById('asteroid-velocity').textContent = asteroide.velocity.toFixed(2) + " km/s";
+
+      // Distancia a la Tierra en km
+      document.getElementById('asteroid-distance').textContent = asteroide.altitude.toFixed(0) + " km";
+
+      // Mostrar la tarjeta
+      document.getElementById('info-card').style.display = 'block';
+    }
 
     // Evento para cuando el usuario elija uno
     select.addEventListener("change", () => {
       console.log("Seleccionaste:", select.value);
       const asteroideSeleccionado = listaAsteroides.find(a => a.id == select.value);
       if (asteroideSeleccionado) {
+        //se enseñan los detalles de este en la tarjeta
+        actualizarCardAsteroide(asteroideSeleccionado);
+
         // Cambiar latitud, longitud y radio según masa y velocidad
         IMPACTO_LAT = asteroideSeleccionado.latitude || IMPACTO_LAT;
         IMPACTO_LON = asteroideSeleccionado.altitude || IMPACTO_LON;
