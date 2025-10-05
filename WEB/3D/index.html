@@ -140,7 +140,6 @@
     top: 60px;
     left: 10px;
     width: 300px;
-<<<<<<< HEAD
     background: rgba(0, 0, 0, 0.7); /* negro semitransparente */
     color: white;
     padding: 10px;
@@ -161,16 +160,6 @@
 
 
 
-=======
-    display: none;
-  ">
-    <img id="asteroid-img" src="" style="width: 100%; margin-bottom:10px; border-radius: 5px;">
-    <h4 id="asteroid-name" style="margin: 0 0 8px 0;"></h4>
-    <p id="asteroid-info" style="margin: 0 0 10px 0; font-size: 14px;"></p>
-    <button id="close-card" style="width: 100%;">Cerrar</button>
-  </div>
-
->>>>>>> 461f52ad45f7380ba2d730d924ab19c588b0865e
   <script>
     // ==========================================
     // 1. VARIABLES GLOBALES
@@ -520,7 +509,6 @@
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
-<<<<<<< HEAD
     //TARJETA DE INFORMACION ASTEROIDE
     document.addEventListener('click', () => {
     raycaster.setFromCamera(pointer, camera);
@@ -552,13 +540,6 @@ document.getElementById('close-card').addEventListener('click', () => {
     document.getElementById('info-card').style.display = 'none';
 });
 
-=======
-    // Sliders de Control
-    document.getElementById('IMPACTO_LAT_RANGE').addEventListener('input', e => {
-      IMPACTO_LAT = parseFloat(e.target.value);
-      document.getElementById('lat-value').textContent = IMPACTO_LAT.toFixed(1);
-    });
->>>>>>> 461f52ad45f7380ba2d730d924ab19c588b0865e
 
     document.getElementById('IMPACTO_LON_RANGE').addEventListener('input', e => {
       IMPACTO_LON = parseFloat(e.target.value);
