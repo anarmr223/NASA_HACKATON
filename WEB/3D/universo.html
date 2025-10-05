@@ -519,11 +519,7 @@
       loader.load(data.url, gltf => {
         const obj = gltf.scene;
         obj.scale.set(1, 1, 1);
-        if (i === 0) {
-          obj.position.set(-1000, -1000, -1000);
-        } else {
-          obj.position.set(10, 10, 10);
-        }
+        obj.position.set(-1000, -1000, -1000);
 
         obj.traverse(child => {
           if (child.isMesh) child.userData.originalEmissive = child.material.emissive.getHex();
