@@ -77,6 +77,99 @@
     button:hover {
       background: #45a049;
     }
+
+    /*#info-card:hover {
+      box-shadow: 0 0 20px 5px white; /* sombra blanca alrededor 
+    }*/
+
+    #info-card.panel {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: block; /* Cambiado a block para que se muestre directamente */
+            z-index: 200;
+            transition: box-shadow 0.3s ease;
+            
+            /* Estilos adicionales chulos */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.5);
+            box-shadow: 
+                0 0 20px rgba(255, 42, 42, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.5);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #info-card.panel:hover {
+            box-shadow: 
+                0 0 30px rgba(255, 42, 42, 0.6),
+                0 8px 25px rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 107, 53, 0.7);
+            cursor:pointer;
+        }
+
+        #info-card h4 {
+            color: #ff2a2a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 42, 42, 0.5);
+            border-bottom: 1px solid rgba(255, 42, 42, 0.3);
+            padding-bottom: 8px;
+        }
+
+        #info-card p {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        #info-card p strong {
+            color: #ff6b35;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 140px;
+        }
+
+        #info-card p span {
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        #info-card button {
+            background: linear-gradient(45deg, #ff2a2a, #ff6b35);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(255, 42, 42, 0.3);
+        }
+
+        #info-card button:hover {
+            background: linear-gradient(45deg, #ff6b35, #ff2a2a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 42, 42, 0.5);
+        }
+
+        #info-card button:active {
+            transform: translateY(0);
+        }
+
+
+
   </style>
 </head>
 
@@ -136,17 +229,20 @@
   </div>
 
   <!-- Tarjeta de Información del Asteroide -->
-  <div id="info-card" class="panel" style="
+<div id="info-card" class="panel" style="
     position: absolute;
-    top: 60px;
-    left: 10px;
+    top: 50%;
+    left: 10px; 
+    transform: translateY(-50%);
     width: 300px;
-    background: rgba(0, 0, 0, 0.7); /* negro semitransparente */
+    background: rgba(0, 0, 0, 0.7); 
     color: white;
-    padding: 10px;
+    padding: 15px;
     border-radius: 8px;
     display: none;
-    z-index: 200;">
+    z-index: 200;
+    transition: box-shadow 0.3s ease;
+">
       
       <h4 id="asteroid-name"></h4>
       <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
@@ -157,7 +253,7 @@
       <p><strong>Distancia a la Tierra:</strong> <span id="asteroid-distance"></span></p>
 
       <button id="close-card" style="margin-top:10px;">Cerrar</button>
-  </div>
+</div>  
 
 
 
