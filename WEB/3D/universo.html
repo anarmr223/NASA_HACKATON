@@ -510,33 +510,20 @@
     crater.scale.set(0.001, 0.001, 0.001);
     scene.add(crater);
 
-    const RADIO_MIN = 10;   // distancia mínima de la Tierra
-    const RADIO_MAX = 20;  // distancia máxima de la Tierra
+    const asteroidModels = [
+      { url: 'modelos/ASTEROID1.gltf', objRef: () => asteroide1, position: null },
+      { url: 'modelos/ASTEROID2.gltf', objRef: () => asteroide2, position: null }
+    ];
 
-    // Genera una posición aleatoria en una esfera alrededor del (0,0,0)
-    function getRandomPosition(radiusMin, radiusMax) {
-      const radius = Math.random() * (radiusMax - radiusMin) + radiusMin;
-      const theta = Math.random() * 2 * Math.PI;      // ángulo horizontal
-      const phi = Math.acos(2 * Math.random() - 1);   // ángulo vertical
-
-      const x = radius * Math.sin(phi) * Math.cos(theta);
-      const y = radius * Math.sin(phi) * Math.sin(theta);
-      const z = radius * Math.cos(phi);
-
-      return new THREE.Vector3(x, y, z);
-    }
-    listaAsteroides.forEach(asteroide => {
-      loader.load('modelos/ASTEROID1.gltf', gltf => {
-        console.log("cargando asteroides");
+    asteroidModels.forEach((data, i) => {
+      loader.load(data.url, gltf => {
         const obj = gltf.scene;
         obj.scale.set(1, 1, 1);
-
-        // Asignamos el nombre del asteroide al objeto 3D
-        obj.name = asteroide.name;
-
-        // Posición aleatoria alrededor de la Tierra
-        const pos = getRandomPosition(RADIO_MIN, RADIO_MAX);
-        obj.position.copy(pos);
+        if (i === 0) {
+          obj.position.set(-1000, -1000, -1000);
+        } else {
+          obj.position.set(10, 10, 10);
+        }
 
         obj.traverse(child => {
           if (child.isMesh) child.userData.originalEmissive = child.material.emissive.getHex();
@@ -544,10 +531,8 @@
 
         scene.add(obj);
         intersectables.push(obj);
-
-        // Guardar la referencia del mesh en el propio asteroide
-        asteroide.mesh = obj;
-
+        if (i === 0) asteroide1 = obj;
+        else asteroide2 = obj;
         updateLoadingState();
       });
     });
