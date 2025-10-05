@@ -24,7 +24,7 @@
 
   <!-- Panel de Controles Principal -->
   <div id="controls-panel" class="panel" style="position: absolute; top: 10px; right: 10px; width: 300px;">
-    <h3 style="margin:0 0 12px 0;">Controles de Impacto</h3>
+    <h3 style="margin:0 0 12px 0;">Impact Controls</h3>
 
     <div style="margin-bottom: 8px;">
       <label for="asteroid-select">Seleccionar asteroide:</label>
@@ -32,30 +32,30 @@
     </div>
 
     <div style="margin-bottom: 8px;">
-      <label>Latitud: <span id="lat-value">40.4</span>°</label>
+      <label>Latitude: <span id="lat-value">40.4</span>°</label>
       <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
     </div>
 
     <div style="margin-bottom: 8px;">
-      <label>Longitud: <span id="lon-value">-3.7</span>°</label>
+      <label>Longitude: <span id="lon-value">-3.7</span>°</label>
       <input type="range" id="IMPACTO_LON_RANGE" min="-180" max="180" step="0.1" value="-3.7">
     </div>
 
     <div style="margin-bottom: 8px;">
-      <label>Radio de Daño: <span id="radius-value">500</span> km</label>
+      <label>Impact Radius: <span id="radius-value">500</span> km</label>
       <input type="range" id="RADIO_IMPACTO" min="100" step="50" value="500">
     </div>
 
     <div style="margin-bottom: 10px;">
       <label>
         <input type="checkbox" id="moverCamara" checked>
-        Mover Cámara al Impacto
+        Move Camera on Impact
       </label>
     </div>
 
     <div>
-      <button id="iniciarImpacto" style="width: 100%;">Simular Impacto</button>
-      <button id="analizarDanos" style="width: 100%; margin-top: 5px; background: #ff6b00;">Analizar Daños</button>
+      <button id="iniciarImpacto" style="width: 100%;">Simulate Impact</button>
+      <button id="analizarDanos" style="width: 100%; margin-top: 5px; background: #ff6b00;">Analyze Damage</button>
     </div>
   </div>
 
