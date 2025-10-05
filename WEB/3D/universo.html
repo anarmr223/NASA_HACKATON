@@ -75,20 +75,20 @@
   </div>
 
   <!-- Tarjeta de Información del Asteroide -->
-  <div id="info-card" class="panel">
-
-    <h4 id="asteroid-name"></h4>
-    <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
-    <p><strong>Hazardous:</strong> <span id="asteroid-hazardous"></span></p>
-    <p><strong>Diameter:</strong> <span id="asteroid-diameter"></span></p>
-    <p><strong>Mass:</strong> <span id="asteroid-mass"></span></p>
-    <p><strong>Velocity:</strong> <span id="asteroid-velocity"></span></p>
-    <p><strong>Distance to Earth:</strong> <span id="asteroid-distance"></span></p>
-    <p><strong>Mitigation measure against possible impact:</strong> <span id="asteroid-impact"></span></p>
-
-
-    <button id="close-card" style="margin-top:10px;">Cerrar</button>
-  </div>
+  <div id="info-card" class="panel" style="
+    position: absolute;
+    top: 50%;
+    left: 10px; 
+    transform: translateY(-50%);
+    width: 300px;
+    background: rgba(0, 0, 0, 0.7); 
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: none;
+    z-index: 200;
+    transition: box-shadow 0.3s ease;
+">
 
     <h4 id="asteroid-name"></h4>
     <p><strong>ID:</strong> <span id="asteroid-id"></span></p>
@@ -155,28 +155,7 @@
         console.error("Error al cargar asteroides");
       }
     });
-    function actualizarCardAsteroide(asteroide) {
-      document.getElementById('asteroid-name').textContent = asteroide.name;
-      document.getElementById('asteroid-id').textContent = asteroide.id;
-      document.getElementById('asteroid-hazardous').textContent = asteroide.is_potentially_hazardous ? "Sí" : "No";
-
-      // Diámetro en km
-      document.getElementById('asteroid-diameter').textContent = asteroide.estimated_diameter.toFixed(3) + " km";
-
-      // Masa en kg
-      document.getElementById('asteroid-mass').textContent = asteroide.mass.toExponential() + " kg";
-
-      // Velocidad en km/s
-      document.getElementById('asteroid-velocity').textContent = asteroide.velocity.toFixed(2) + " km/s";
-
-      // Distancia a la Tierra en km
-      document.getElementById('asteroid-distance').textContent = asteroide.altitude.toFixed(0) + " km";
-
-      document.getElementById('asteroid-impact').textContent = "Here we would present the action plan to avoid the meteor, but we didn’t have enough time to implement it in code. The plan would be based on the PAPA strategy";
-
-      // Mostrar la tarjeta
-      document.getElementById('info-card').style.display = 'block';
-    }
+    
 
     // Evento para cuando el usuario elija uno
     select.addEventListener("change", () => {
