@@ -112,24 +112,10 @@
     <h3 style="margin:0 0 12px 0;">Controles de Impacto</h3>
 
     <div style="margin-bottom: 8px;">
-      <label>Seleccionar asteroide: <span id="selected-asteroid"></span></label>
-      <script>
-        // Mostrar el primer asteroide de la lista cuando esté disponible
-        function mostrarPrimerAsteroide() {
-          if (listaAsteroides && listaAsteroides.length > 0) {
-        document.getElementById('selected-asteroid').textContent = listaAsteroides[0].name || 'Asteroide';
-          } else {
-        document.getElementById('selected-asteroid').textContent = 'Cargando...';
-          }
-        }
-        // Actualizar cuando se cargue la lista
-        cargarAsteroides().then(data => {
-          listaAsteroides = data || [];
-          mostrarPrimerAsteroide();
-        });
-      </script>
-      <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
+      <label for="asteroid-select">Seleccionar asteroide:</label>
+      <select id="asteroid-select"></select>
     </div>
+
     <div style="margin-bottom: 8px;">
       <label>Latitud: <span id="lat-value">40.4</span>°</label>
       <input type="range" id="IMPACTO_LAT_RANGE" min="-90" max="90" step="0.1" value="40.4">
@@ -230,6 +216,24 @@
         console.error("Error al cargar asteroides");
       }
     });
+    const select = document.getElementById("asteroid-select");
+
+    // Vaciar por si acaso
+    select.innerHTML = "";
+
+    // Crear una opción por cada asteroide
+    listaAsteroides.forEach(asteroide => {
+      const option = document.createElement("option");
+      option.value = asteroide.id;      // valor interno
+      option.textContent = asteroide.nombre;  // texto visible
+      select.appendChild(option);
+    });
+
+    // Evento para cuando el usuario elija uno
+    select.addEventListener("change", () => {
+      console.log("Seleccionaste:", select.value);
+    });
+
 
     let asteroide1 = null, asteroide2 = null, tierra = null, crater = null;
 
